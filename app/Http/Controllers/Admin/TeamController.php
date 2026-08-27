@@ -25,7 +25,7 @@ class TeamController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'position' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'bio' => 'nullable|string',
         ]);
 

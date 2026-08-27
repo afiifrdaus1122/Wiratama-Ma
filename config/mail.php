@@ -16,6 +16,8 @@ return [
 
     'default' => env('MAIL_MAILER', 'log'),
 
+    'sales_address' => env('SALES_EMAIL', 'sales@wma.co.id'),
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

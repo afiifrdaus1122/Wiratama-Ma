@@ -8,6 +8,11 @@
 </div>
 
 <div class="container py-5">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Total Request</small><h3 class="fw-bold mb-0">{{ $stats['total'] }}</h3></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">RFQ Aktif</small><h3 class="fw-bold text-primary mb-0">{{ $stats['active_rfqs'] }}</h3></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Selesai</small><h3 class="fw-bold text-success mb-0">{{ $stats['completed'] }}</h3></div></div></div>
+    </div>
     <div class="row g-4">
         <!-- Sidebar -->
         <div class="col-md-3">
@@ -66,8 +71,18 @@
                                             <span class="badge bg-success">Completed</span>
                                         @elseif($order->status == 'cancelled')
                                             <span class="badge bg-danger">Cancelled</span>
+                                        @elseif($order->status == 'quotation_requested')
+                                            <span class="badge bg-primary">RFQ Diterima</span>
+                                        @elseif($order->status == 'quotation_sent')
+                                            <span class="badge bg-success">Quotation Tersedia</span>
+                                        @elseif($order->status == 'negotiation')
+                                            <span class="badge bg-info text-dark">Negosiasi</span>
+                                        @elseif($order->status == 'deal_won')
+                                            <span class="badge bg-success">Deal Won</span>
+                                        @elseif($order->status == 'deal_lost')
+                                            <span class="badge bg-danger">Deal Lost</span>
                                         @else
-                                            <span class="badge bg-secondary">{{ ucfirst($order->status) }}</span>
+                                            <span class="badge bg-secondary">{{ ucfirst(str_replace('_', ' ', $order->status)) }}</span>
                                         @endif
                                     </td>
                                     <td class="pe-4 text-center">

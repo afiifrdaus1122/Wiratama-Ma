@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-light py-5 border-bottom" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
     <div class="container">
-        <h2 class="fw-bold text-dark mb-0" style="font-size: 2.5rem; letter-spacing: -0.03em;"><i class="bi bi-cart3 me-2 text-primary"></i> Keranjang Belanja</h2>
+        <h2 class="fw-bold text-dark mb-0 cart-page-title" style="font-size: 2.5rem; letter-spacing: -0.03em;"><i class="bi bi-cart3 me-2 text-primary"></i> Keranjang Belanja</h2>
         <p class="text-muted mt-2">Tinjau kembali barang yang Anda butuhkan sebelum melanjutkan ke proses checkout.</p>
     </div>
 </div>
@@ -56,7 +56,7 @@
                                                     </div>
                                                 @endif
                                                 <div>
-                                                    <a href="{{ route('products.show', $details['slug'] ?? '#') }}" class="text-dark fw-bold text-decoration-none hover-primary mb-1 d-block" style="font-size: 1.05rem;">{{ $details['name'] }}</a>
+                                                    <a href="{{ route('products.show', $details['slug'] ?? '#') }}" class="text-dark fw-bold text-decoration-none hover-primary mb-1 d-block cart-item-name" style="font-size: 1.05rem;">{{ $details['name'] }}</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -108,7 +108,7 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm position-sticky" style="top: 20px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08) !important;">
+            <div class="card border-0 shadow-sm position-sticky cart-summary-card" style="top: 20px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08) !important;">
                 <div class="card-body p-4 p-xl-5">
                     <h5 class="mb-4 fw-bold fs-4">Ringkasan Belanja</h5>
                     
@@ -128,7 +128,7 @@
                         <span class="fw-black fs-4 text-primary" style="font-weight: 900;">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
 
-                    <div class="d-flex flex-column gap-2 mb-3">
+                    <div class="cart-actions d-flex flex-column gap-2 mb-3">
                         @php
                             $globalCompanyProfile = \App\Models\CompanyProfile::first();
                             $rawWa = $globalCompanyProfile && $globalCompanyProfile->whatsapp ? $globalCompanyProfile->whatsapp : '6281189491561';
@@ -157,11 +157,11 @@
                             $encodedBody = rawurlencode($emailBody);
                             $mailtoLink = "mailto:sales@wma.co.id?subject=" . rawurlencode("Request For Quotation (RFQ)") . "&body=" . $encodedBody;
                         @endphp
-                        <a href="{{ $waLink }}" target="_blank" class="btn btn-success rounded-pill py-3 px-4 fw-bold shadow-sm {{ count($cart) == 0 ? 'disabled' : '' }}" style="font-size: 1.05rem; background-color: #25D366; border: none;">
-                            <i class="bi bi-whatsapp me-2 fs-5 align-middle"></i> Ajukan via WhatsApp Sales
+                        <a href="{{ $waLink }}" target="_blank" class="cart-action-button cart-action-whatsapp btn rounded-pill fw-bold shadow-sm {{ count($cart) == 0 ? 'disabled' : '' }}">
+                            <i class="bi bi-whatsapp me-2 align-middle"></i><span>Ajukan via WhatsApp Sales</span>
                         </a>
-                        <a href="{{ $mailtoLink }}" class="btn btn-outline-primary rounded-pill py-2.5 px-4 fw-semibold {{ count($cart) == 0 ? 'disabled' : '' }}" style="font-size: 0.95rem;">
-                            <i class="bi bi-envelope-check me-2"></i> Ajukan via Email (sales@wma.co.id)
+                        <a href="{{ $mailtoLink }}" class="cart-action-button cart-action-email btn rounded-pill fw-semibold {{ count($cart) == 0 ? 'disabled' : '' }}">
+                            <i class="bi bi-envelope-check me-2 align-middle"></i><span>Ajukan via Email <small>(sales@wma.co.id)</small></span>
                         </a>
                     </div>
                     
@@ -179,5 +179,48 @@
 <style>
     .hover-primary:hover { color: #0070f3 !important; }
     .transition-all { transition: all 0.3s ease; }
+    .cart-action-button {
+        min-height: 48px;
+        padding: 0.7rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.15rem;
+        text-align: center;
+        line-height: 1.35;
+        font-size: 0.94rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    .cart-action-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(15, 54, 112, 0.14) !important;
+    }
+    .cart-action-whatsapp {
+        color: #fff;
+        background-color: #25d366;
+        border: none;
+    }
+    .cart-action-whatsapp:hover { color: #fff; background-color: #20bd5b; }
+    .cart-action-email { border-width: 1.5px; }
+    .cart-action-email small { font-size: 0.86em; }
+
+    @media (max-width: 767.98px) {
+        .cart-page-title {
+            font-size: 1.75rem !important;
+        }
+        .cart-item-name {
+            overflow-wrap: anywhere;
+        }
+        .cart-summary-card {
+            position: static !important;
+        }
+        .cart-action-button {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .cart-action-button { font-size: 0.88rem; padding-left: 0.75rem; padding-right: 0.75rem; }
+    }
 </style>
 @endsection

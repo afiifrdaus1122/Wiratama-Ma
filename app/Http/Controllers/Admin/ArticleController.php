@@ -25,15 +25,20 @@ class ArticleController extends Controller
 
     public function store(Request $request)
     {
+        // Allow large article content (with embedded base64 images)
+        ini_set('post_max_size', '256M');
+        ini_set('upload_max_filesize', '256M');
+        ini_set('memory_limit', '512M');
+
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'               => 'required|string|max:255',
             'article_category_id' => 'nullable',
-            'content' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string|max:255',
-            'is_published' => 'boolean',
+            'content'             => 'required',
+            'image'               => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'meta_title'          => 'nullable|string|max:255',
+            'meta_description'    => 'nullable|string',
+            'meta_keywords'       => 'nullable|string|max:255',
+            'is_published'        => 'boolean',
         ]);
 
         $data = $request->all();
@@ -70,15 +75,20 @@ class ArticleController extends Controller
 
     public function update(Request $request, Article $article)
     {
+        // Allow large article content (with embedded base64 images)
+        ini_set('post_max_size', '256M');
+        ini_set('upload_max_filesize', '256M');
+        ini_set('memory_limit', '512M');
+
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title'               => 'required|string|max:255',
             'article_category_id' => 'nullable',
-            'content' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string',
-            'meta_keywords' => 'nullable|string|max:255',
-            'is_published' => 'boolean',
+            'content'             => 'required',
+            'image'               => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'meta_title'          => 'nullable|string|max:255',
+            'meta_description'    => 'nullable|string',
+            'meta_keywords'       => 'nullable|string|max:255',
+            'is_published'        => 'boolean',
         ]);
 
         $data = $request->all();

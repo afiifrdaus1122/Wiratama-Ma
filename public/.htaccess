@@ -5,6 +5,17 @@
 
     RewriteEngine On
 
+    Options -Indexes
+    <FilesMatch "^(\.env|\.env\..*|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|artisan)$">
+        Require all denied
+    </FilesMatch>
+
+    <IfModule mod_headers.c>
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set X-Frame-Options "SAMEORIGIN"
+        Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    </IfModule>
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Models\OrderStatusHistory;
+use App\Mail\RfqOrderMail;
 
 class CheckoutController extends Controller
 {
@@ -87,7 +92,17 @@ class CheckoutController extends Controller
                 'tax' => $ppn,
                 'total_amount' => $total,
                 'status' => $status,
+                'quotation_number' => $status === 'quotation_requested' ? 'RFQ-' . date('Ymd') . '-' . str_pad((string) (Order::whereDate('created_at', today())->count() + 1), 4, '0', STR_PAD_LEFT) : null,
             ]);
+
+            if ($status === 'quotation_requested') {
+                OrderStatusHistory::create([
+                    'order_id' => $order->id,
+                    'status' => $status,
+                    'note' => 'RFQ diterima dari pelanggan.',
+                    'changed_by' => Auth::id(),
+                ]);
+            }
 
             // Create Order Items
             foreach ($cart as $item) {
@@ -134,6 +149,14 @@ class CheckoutController extends Controller
 
             DB::commit();
 
+            if ($status === 'quotation_requested') {
+                try {
+                    Mail::to(config('mail.sales_address', 'sales@wma.co.id'))->send(new RfqOrderMail($order->fresh('items')));
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('RFQ order email failed: ' . $e->getMessage());
+                }
+            }
+
             // Send Email to Customer & Admin
             try {
                 \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\OrderPlacedMail($order));
@@ -141,8 +164,11 @@ class CheckoutController extends Controller
                 // Ignore mail errors so checkout still succeeds
             }
 
-            // Clear Cart
+            // Clear Cart (session + database for authenticated users)
             session()->forget('cart');
+            if (Auth::check()) {
+                Cart::where('user_id', Auth::id())->delete();
+            }
 
             return redirect()->route('checkout.success', ['order' => $order->invoice_number])->with('success', 'Pesanan Anda berhasil dibuat.');
 

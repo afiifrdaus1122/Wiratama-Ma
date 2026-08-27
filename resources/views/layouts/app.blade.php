@@ -67,8 +67,8 @@
             animation: fadeInPage 0.4s ease-out forwards;
         }
         @keyframes fadeInPage {
-            0% { opacity: 0; transform: translateY(4px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
         
         /* Image Zoom Utility */
@@ -208,6 +208,60 @@
         }
         .hover-opacity:hover {
             opacity: 0.7;
+        }
+        body {
+            overflow-x: hidden;
+        }
+        .navbar-brand {
+            min-width: 0;
+        }
+        .navbar-brand > div {
+            min-width: 0;
+        }
+        .navbar-brand span {
+            overflow-wrap: anywhere;
+        }
+        @media (max-width: 575.98px) {
+            .container {
+                --bs-gutter-x: 1.25rem;
+            }
+            .navbar .container {
+                padding-top: 0.65rem !important;
+                padding-bottom: 0.65rem !important;
+            }
+            .navbar-brand img {
+                height: 34px !important;
+            }
+            .navbar-brand .brand-subtitle-mobile {
+                font-size: 0.58rem !important;
+            }
+            .navbar-toggler {
+                padding: 0.35rem 0.5rem;
+            }
+            .navbar-collapse {
+                padding-top: 0.75rem;
+            }
+            .navbar-nav .nav-link {
+                padding: 0.6rem 0 !important;
+            }
+            .navbar-nav.align-items-center {
+                align-items: stretch !important;
+            }
+            .navbar-nav .nav-item.me-3 {
+                margin-right: 0 !important;
+            }
+            .footer {
+                overflow-wrap: anywhere;
+            }
+            .footer h4 {
+                font-size: 1rem;
+            }
+            .back-to-top-btn {
+                right: 14px;
+                bottom: 14px;
+                width: 40px;
+                height: 40px;
+            }
         }
         @media all and (min-width: 992px) {
             .navbar .nav-item .dropdown-menu { display: none; }
@@ -521,35 +575,6 @@
             </div>
         </footer>
     </div>
-    <style>
-        .floating-admin-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0,0,0,0.1);
-            color: rgba(255,255,255,0.5);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        .floating-admin-btn:hover {
-            background-color: #0d47a1;
-            color: #fff;
-            transform: scale(1.1);
-        }
-    </style>
-    @guest
-        <a href="{{ url('admin/login') }}" class="floating-admin-btn" title="Admin Login">
-            <i class="bi bi-gear-fill" style="font-size: 1.2rem;"></i>
-        </a>
-    @endguest
-
     <!-- Back To Top Button -->
     <button id="back-to-top" class="back-to-top-btn" title="Back to Top">
         <i class="bi bi-arrow-up"></i>

@@ -69,6 +69,15 @@
 
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3"><h5 class="mb-0 fw-bold">RFQ Tracking</h5></div>
+                <div class="card-body">
+                    @foreach($order->statusHistories as $history)
+                        <div class="d-flex gap-2 mb-3"><i class="bi bi-check-circle-fill text-primary"></i><div><strong>{{ ucfirst(str_replace('_', ' ', $history->status)) }}</strong><small class="d-block text-muted">{{ $history->created_at->format('d M Y H:i') }}</small>@if($history->note)<small>{{ $history->note }}</small>@endif</div></div>
+                    @endforeach
+                    <a href="{{ route('customer.quotation.pdf', $order->invoice_number) }}" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-file-earmark-pdf me-1"></i> Download RFQ PDF</a>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold">Order Information</h5>
                 </div>
@@ -96,6 +105,10 @@
                         @elseif($order->status == 'quotation_sent')
                             <span class="badge bg-success px-3 py-2 mt-1">Quotation Sent</span>
                             <p class="small text-muted mt-2">Admin telah membalas penawaran Anda. Jika harga cocok, Anda bisa membalas email atau menghubungi kami kembali via WhatsApp.</p>
+                            <form action="{{ route('customer.quotation.accept', $order->invoice_number) }}" method="POST" class="mt-2">
+                                @csrf
+                                <button class="btn btn-primary btn-sm"><i class="bi bi-check-circle me-1"></i> Setujui Penawaran</button>
+                            </form>
                         @else
                             <span class="badge bg-secondary px-3 py-2 mt-1">{{ ucfirst(str_replace('_', ' ', $order->status)) }}</span>
                         @endif

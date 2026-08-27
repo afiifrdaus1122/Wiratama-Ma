@@ -25,7 +25,7 @@ class HighlightEventController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:image,video,news',
-            'media' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,webm|max:20480',
+            'media' => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,webm|max:20480',
             'content' => 'nullable|string',
             'action_link' => 'nullable|string',
             'action_text' => 'nullable|string|max:50',
@@ -53,7 +53,7 @@ class HighlightEventController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:image,video,news',
-            'media' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,webm|max:20480',
+            'media' => 'nullable|file|mimes:jpeg,png,jpg,webp,mp4,webm|max:20480',
             'content' => 'nullable|string',
             'action_link' => 'nullable|string',
             'action_text' => 'nullable|string|max:50',

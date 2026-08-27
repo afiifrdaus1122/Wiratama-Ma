@@ -24,7 +24,7 @@ class ClientLogoController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|image|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'url' => 'nullable|url',
             'order' => 'nullable|integer',
         ]);

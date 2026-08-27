@@ -71,6 +71,7 @@
                             <button type="submit" class="btn btn-primary">Update</button>
                         </span>
                     </div>
+                    <textarea name="note" class="form-control mt-2" rows="2" placeholder="Catatan perubahan status (opsional)"></textarea>
                 </form>
             </div>
         </div>

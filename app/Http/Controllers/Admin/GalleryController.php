@@ -27,7 +27,7 @@ class GalleryController extends Controller
             'title' => 'required|string|max:255',
             'gallery_category' => 'required|string|max:255',
             'image_path' => 'required|array',
-            'image_path.*' => 'image|max:5120', // allow up to 5mb per image
+            'image_path.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             'description' => 'nullable|string',
         ]);
 

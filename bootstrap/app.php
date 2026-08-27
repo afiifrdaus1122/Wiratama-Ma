@@ -11,6 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         $middleware->validateCsrfTokens(except: [
             'midtrans/callback',
         ]);
@@ -20,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             }
             return route('customer.login');
         });
+        // Sync authenticated user's DB cart → session on every request
+        $middleware->appendToGroup('web', \App\Http\Middleware\SyncCartFromDatabase::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

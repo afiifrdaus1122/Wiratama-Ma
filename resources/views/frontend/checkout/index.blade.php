@@ -7,7 +7,7 @@
 @endphp
 <div class="bg-light py-5 border-bottom" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
     <div class="container">
-        <h2 class="fw-bold text-dark mb-0" style="font-size: 2.5rem; letter-spacing: -0.03em;">
+        <h2 class="fw-bold text-dark mb-0 checkout-page-title" style="font-size: 2.5rem; letter-spacing: -0.03em;">
             @if($isRfq)
                 <i class="bi bi-file-earmark-text me-2 text-primary"></i> Request Quotation
             @else
@@ -107,14 +107,14 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm position-sticky" style="top: 20px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08) !important;">
+            <div class="card border-0 shadow-sm position-sticky checkout-summary-card" style="top: 20px; border-radius: 24px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08) !important;">
                 <div class="card-header bg-white border-bottom-0 py-4 px-4 px-xl-5">
                     <h5 class="mb-0 fw-bold fs-4">Your Order</h5>
                 </div>
                 <div class="card-body p-4 p-xl-5 pt-0">
                     <div class="mb-4">
                         @foreach($cart as $details)
-                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-light">
+                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-light checkout-order-row">
                                 <div>
                                     <span class="text-dark fw-bold d-block">{{ Str::limit($details['name'], 30) }}</span>
                                     <small class="text-muted fw-semibold">x {{ $details['quantity'] }}</small>
@@ -140,7 +140,7 @@
                         <span class="fw-black fs-4 text-primary" style="font-weight: 900;">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
 
-                    <button type="submit" form="checkoutForm" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm" style="font-size: 1.1rem; letter-spacing: 0.5px;">
+                    <button type="submit" form="checkoutForm" class="checkout-submit-button btn btn-primary w-100 rounded-pill fw-bold shadow-sm">
                         @if($isRfq)
                             Kirim Permintaan Penawaran <i class="bi bi-arrow-right ms-2"></i>
                         @else
@@ -165,4 +165,34 @@
         </div>
     </div>
 </div>
+
+<style>
+    @media (max-width: 767.98px) {
+        .checkout-page-title {
+            font-size: 1.75rem !important;
+            line-height: 1.2;
+        }
+        .checkout-summary-card {
+            position: static !important;
+        }
+        .checkout-order-row {
+            gap: 0.75rem;
+        }
+        .checkout-order-row > span:last-child {
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+    }
+    .checkout-submit-button {
+        min-height: 52px;
+        padding: 0.8rem 1.25rem;
+        font-size: 1rem;
+        line-height: 1.35;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    .checkout-submit-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(15, 54, 112, 0.16) !important;
+    }
+</style>
 @endsection

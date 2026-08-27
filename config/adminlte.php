@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'PT. Wiratama Mitra Abadi',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -113,8 +113,8 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'path' => 'images/logo.png',
+            'alt' => 'PT. Wiratama Mitra Abadi',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,

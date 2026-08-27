@@ -6,15 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomerController extends Controller
 {
     public function dashboard()
     {
         $user = Auth::user();
-        $orders = Order::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $orders = Order::where('user_id', $user->id)->with('items')->orderBy('created_at', 'desc')->get();
+        $stats = [
+            'total' => $orders->count(),
+            'active_rfqs' => $orders->whereIn('status', ['quotation_requested', 'quotation_sent', 'negotiation'])->count(),
+            'completed' => $orders->whereIn('status', ['completed', 'deal_won'])->count(),
+        ];
         
-        return view('frontend.customer.dashboard', compact('user', 'orders'));
+        return view('frontend.customer.dashboard', compact('user', 'orders', 'stats'));
     }
 
     public function orderDetail(Order $order)
@@ -24,8 +30,17 @@ class CustomerController extends Controller
             abort(403);
         }
 
-        $order->load('items.product');
+        $order->load('items.product', 'statusHistories');
         return view('frontend.customer.order_detail', compact('order'));
+    }
+
+    public function downloadQuotation(Order $order)
+    {
+        abort_unless($order->user_id === Auth::id(), 403);
+        $order->load('items.product');
+        return Pdf::loadView('frontend.customer.quotation_pdf', compact('order'))
+            ->setPaper('a4')
+            ->download(($order->quotation_number ?: $order->invoice_number) . '.pdf');
     }
     public function checkoutQuotation(Order $order)
     {

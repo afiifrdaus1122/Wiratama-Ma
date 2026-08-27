@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\OrdersExport;
+use App\Models\OrderStatusHistory;
 
 class OrderController extends Controller
 {
@@ -32,8 +33,12 @@ class OrderController extends Controller
             'status' => 'required|in:quotation_requested,quotation_sent,negotiation,deal_won,deal_lost,pending,processing,completed,cancelled'
         ]);
 
-        $order->update([
-            'status' => $request->status
+        $order->update(['status' => $request->status]);
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'status' => $request->status,
+            'note' => $request->input('note'),
+            'changed_by' => auth()->id(),
         ]);
 
         return redirect()->back()->with('success', 'Order status updated successfully.');

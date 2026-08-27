@@ -9,6 +9,10 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'invoice_number',
+        'quotation_number',
+        'quotation_valid_until',
+        'quotation_file',
+        'quotation_notes',
         'contact_person',
         'email',
         'phone',
@@ -25,8 +29,17 @@ class Order extends Model
         'payment_type',
     ];
 
+    protected $casts = [
+        'quotation_valid_until' => 'date',
+    ];
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(OrderStatusHistory::class)->latest();
     }
 }

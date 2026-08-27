@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<div class="container py-5">
+<div class="container py-5 product-detail-page">
     <div class="row g-5">
         <!-- Left: Product Image Gallery -->
         <div class="col-lg-4">
@@ -67,7 +67,7 @@
         <!-- Right: Product Information & Cart -->
         <div class="col-lg-8">
             <!-- Brand & Badges -->
-            <div class="d-flex align-items-center mb-2">
+            <div class="d-flex align-items-center mb-2 product-meta">
                 <span class="text-uppercase fw-bold text-muted small tracking-wide me-3">{{ $product->brand ?? 'General' }}</span>
                 <span class="badge bg-primary text-white rounded-0 px-2 py-1 me-2"><i class="bi bi-tag-fill me-1"></i>{{ $product->category->name }}</span>
                 @if($product->stock > 0)
@@ -110,7 +110,7 @@
                 <form action="{{ route('cart.add') }}" method="POST">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
-                    <div class="d-flex flex-column flex-md-row gap-3 align-items-md-end">
+                    <div class="d-flex flex-column flex-md-row gap-3 align-items-md-end product-actions">
                         
                         <!-- Quantity Selector -->
                         <div style="width: 140px;">
@@ -142,12 +142,12 @@
             <!-- RFQ Modal -->
             <!-- RFQ Email Composer Modal -->
             <div class="modal fade" id="rfqModal" tabindex="-1" aria-labelledby="rfqModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                     <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
                         
                         <!-- Email Header -->
                         <div class="modal-header bg-dark text-white border-0 py-3 d-flex align-items-center">
-                            <h6 class="modal-title fw-bold mb-0" id="rfqModalLabel"><i class="bi bi-envelope-plus-fill me-2"></i> New Message</h6>
+                            <h6 class="modal-title fw-bold mb-0" id="rfqModalLabel"><i class="bi bi-envelope-plus-fill me-2"></i> Pesan Baru</h6>
                             <div class="ms-auto d-flex gap-3">
                                 <i class="bi bi-dash cursor-pointer" data-bs-dismiss="modal"></i>
                                 <i class="bi bi-arrows-angle-expand cursor-pointer"></i>
@@ -158,15 +158,15 @@
                         <!-- Email Meta Info -->
                         <div class="bg-light px-4 py-2 border-bottom text-muted" style="font-size: 0.9rem;">
                             <div class="row mb-2 align-items-center">
-                                <div class="col-sm-1 text-end fw-bold">To:</div>
+                                <div class="col-sm-1 text-end fw-bold">Kepada:</div>
                                 <div class="col-sm-11">
                                     <span class="badge bg-primary rounded-pill px-3 py-1 fw-normal">sales@wma.co.id <i class="bi bi-x ms-1"></i></span>
                                 </div>
                             </div>
                             <div class="row align-items-center">
-                                <div class="col-sm-1 text-end fw-bold">Subject:</div>
+                                <div class="col-sm-1 text-end fw-bold">Subjek:</div>
                                 <div class="col-sm-11">
-                                    <input type="text" class="form-control form-control-sm border-0 bg-transparent fw-bold text-dark px-0 shadow-none" value="Request for Quotation - {{ $product->name }}" readonly>
+                                    <input type="text" id="rfqSubject" class="form-control form-control-sm border-0 bg-transparent fw-bold text-dark px-0 shadow-none" value="Permohonan Penawaran Harga (RFQ) - {{ $product->name }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -179,28 +179,40 @@
                                 $waNumber = '62' . substr($waNumber, 1);
                             }
                         @endphp
-                        <form id="rfqForm">
+                        <form id="rfqForm" action="{{ route('products.rfq.send', $product->slug) }}" method="POST">
                             @csrf
                             
                             <!-- Sender Quick Info -->
-                            <div class="bg-white px-4 py-3 border-bottom d-flex gap-3 flex-column flex-md-row">
-                                <input type="email" id="rfqEmail" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Your Email *" required style="background: transparent;">
-                                <input type="text" id="rfqName" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Your Name / Company *" required style="background: transparent;">
-                                <input type="tel" id="rfqPhone" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Phone Number / WhatsApp *" required style="background: transparent;">
+                            <div class="bg-white px-4 py-3 border-bottom">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="rfqLanguage" class="form-label small fw-bold text-muted mb-1">Bahasa RFQ / RFQ Language</label>
+                                        <select id="rfqLanguage" name="language" class="form-select border-0 border-bottom rounded-0 shadow-none px-1" required style="background-color: transparent;">
+                                            <option value="id">Bahasa Indonesia</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="email" id="rfqEmail" name="email" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Email Aktif *" required style="background: transparent;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" id="rfqName" name="name" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Nama Lengkap PIC *" required style="background: transparent;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" id="rfqCompany" name="company" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Nama Perusahaan *" required style="background: transparent;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="tel" id="rfqPhone" name="phone" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Telepon / WhatsApp *" required style="background: transparent;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" id="rfqQuantity" name="quantity" class="form-control border-0 border-bottom rounded-0 shadow-none px-1" placeholder="Jumlah Unit *" value="1" min="1" max="9999" required style="background: transparent;">
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Email Body Template -->
                             <div class="p-0 bg-white">
-                                <textarea id="rfqNotes" class="form-control border-0 px-4 py-4 shadow-none text-dark" rows="8" style="resize: none; font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.95rem; line-height: 1.6;" required>Dear Sales Team PT. Wiratama Mitra Abadi,
-
-We would like to request a formal quotation (RFQ) for the following product:
-- Product Name : {{ $product->name }}
-- Quantity     : 1 Unit
-
-Additional requirements:
-[Please type any specific requirements here]
-
-We look forward to receiving your prompt response. Thank you.</textarea>
+                                <textarea id="rfqNotes" name="notes" class="form-control border-0 px-4 py-4 shadow-none text-dark" rows="10" style="resize: none; font-family: 'Segoe UI', Arial, sans-serif; font-size: 0.95rem; line-height: 1.6;" required></textarea>
                             </div>
 
                             <!-- Footer Actions -->
@@ -209,8 +221,8 @@ We look forward to receiving your prompt response. Thank you.</textarea>
                                     <button type="button" class="btn btn-success fw-bold px-4 rounded-pill shadow-sm d-flex align-items-center justify-content-center" style="background-color: #25D366; border: none;" onclick="sendRfqWhatsApp('{{ $waNumber }}', '{{ addslashes($product->name) }}')">
                                         <i class="bi bi-whatsapp me-2 fs-5"></i> Send via WhatsApp
                                     </button>
-                                    <button type="button" class="btn btn-primary fw-bold px-4 rounded-pill shadow-sm d-flex align-items-center justify-content-center" onclick="sendRfqEmail('{{ addslashes($product->name) }}')">
-                                        <i class="bi bi-envelope-fill me-2"></i> Send via Email
+                                    <button type="submit" class="btn btn-primary fw-bold px-4 rounded-pill shadow-sm d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-envelope-fill me-2"></i> Kirim Email
                                     </button>
                                 </div>
                                 <div class="text-muted small">
@@ -411,6 +423,63 @@ We look forward to receiving your prompt response. Thank you.</textarea>
 
 <style>
     body { background-color: #fbfbfb; }
+    #rfqModal .modal-dialog { max-height: calc(100vh - 2rem); }
+    #rfqModal .modal-content { max-height: calc(100vh - 2rem); }
+    #rfqModal .modal-content > form { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+    @media (max-width: 575.98px) {
+        #rfqModal .modal-dialog { margin: 0.5rem; }
+        #rfqModal .modal-content { max-height: calc(100vh - 1rem); }
+        .product-detail-page .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .product-detail-page h1 {
+            font-size: 1.65rem !important;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+        .product-detail-page .product-meta {
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+        .product-detail-page .product-meta .me-3 {
+            margin-right: 0 !important;
+        }
+        .product-detail-page .product-actions > div,
+        .product-detail-page .product-actions button {
+            width: 100%;
+        }
+        #rfqModal .modal-header,
+        #rfqModal .modal-body,
+        #rfqModal .modal-footer {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        #rfqModal .modal-header .modal-title {
+            max-width: 70%;
+            overflow-wrap: anywhere;
+        }
+        #rfqModal .modal-content > form > .bg-light:last-child,
+        #rfqModal .modal-content > form > div:last-child {
+            align-items: stretch !important;
+        }
+        #rfqModal .modal-content > form button {
+            width: 100%;
+        }
+        #rfqModal .modal-content > form .d-flex.gap-2 {
+            flex-direction: column;
+        }
+        .modern-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 0.75rem !important;
+        }
+        .modern-tabs .nav-link {
+            white-space: nowrap;
+            padding-left: 0.85rem !important;
+            padding-right: 0.85rem !important;
+        }
+    }
     .cursor-pointer { cursor: pointer; }
     .tracking-wide { letter-spacing: 0.05em; }
     .product-card {
@@ -518,19 +587,102 @@ We look forward to receiving your prompt response. Thank you.</textarea>
                 wrapper.appendChild(table);
             });
         }
+    });
+
+    const rfqProductName = @json($product->name);
+
+    function updateRfqDraft() {
+        const notes = document.getElementById('rfqNotes');
+        if (!notes || notes.dataset.edited === 'true') {
+            return;
+        }
+
+        const language = document.getElementById('rfqLanguage').value;
+        const subject = document.getElementById('rfqSubject');
+        subject.value = language === 'en'
+            ? 'Request for Quotation (RFQ) - ' + rfqProductName
+            : 'Permohonan Penawaran Harga (RFQ) - ' + rfqProductName;
+        const name = document.getElementById('rfqName').value || '[Nama Lengkap PIC]';
+        const company = document.getElementById('rfqCompany').value || '[Nama Perusahaan]';
+        const email = document.getElementById('rfqEmail').value || '[Email]';
+        const phone = document.getElementById('rfqPhone').value || '[Nomor Telepon / WhatsApp]';
+        const quantity = document.getElementById('rfqQuantity').value || '1';
+
+        if (language === 'en') {
+            notes.value = `Dear Sales Team of PT Wiratama Mitra Abadi,
+
+We would like to request a formal quotation from ${company} for the following product:
+- Product name      : ${rfqProductName}
+- Quantity          : ${quantity} unit(s)
+- Required date     : [Please specify required date]
+- Delivery location : [Please specify delivery address]
+
+Please include your best price, product availability, estimated delivery time, quotation validity, warranty, and payment terms.
+
+Please let us know if any additional information is required.
+
+Thank you for your attention and cooperation. We look forward to receiving your quotation.
+
+Best regards,
+
+${name}
+${company}
+${phone}
+${email}`;
+            return;
+        }
+
+        notes.value = `Yth. Tim Sales PT. Wiratama Mitra Abadi,
+
+Dengan hormat,
+
+Kami dari ${company} bermaksud meminta penawaran harga resmi untuk produk berikut:
+- Nama produk       : ${rfqProductName}
+- Jumlah            : ${quantity} unit
+- Waktu kebutuhan   : [Isi waktu kebutuhan]
+- Lokasi pengiriman : [Isi alamat/lokasi pengiriman]
+
+Mohon dapat diinformasikan harga terbaik, ketersediaan barang, estimasi waktu pengiriman, masa berlaku penawaran, garansi, serta ketentuan pembayaran.
+
+Apabila diperlukan informasi tambahan, kami siap melengkapinya.
+
+Demikian permohonan ini kami sampaikan. Atas perhatian dan kerja sama yang baik, kami ucapkan terima kasih.
+
+Hormat kami,
+
+${name}
+${company}
+${phone}
+${email}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const draftFields = ['rfqLanguage', 'rfqEmail', 'rfqName', 'rfqCompany', 'rfqPhone', 'rfqQuantity'];
+        const notes = document.getElementById('rfqNotes');
+
+        draftFields.forEach(function(fieldId) {
+            document.getElementById(fieldId).addEventListener('input', updateRfqDraft);
+        });
+        document.getElementById('rfqLanguage').addEventListener('change', function() {
+            notes.dataset.edited = 'false';
+            updateRfqDraft();
+        });
+        notes.addEventListener('input', function() {
+            notes.dataset.edited = 'true';
+        });
+        updateRfqDraft();
+    });
+
     function sendRfqWhatsApp(waNum, productName) {
         const name = document.getElementById('rfqName').value || '-';
+        const company = document.getElementById('rfqCompany').value || '-';
         const email = document.getElementById('rfqEmail').value || '-';
         const phone = document.getElementById('rfqPhone').value || '-';
+        const quantity = document.getElementById('rfqQuantity').value || '1';
         const notes = document.getElementById('rfqNotes').value || '';
+        const language = document.getElementById('rfqLanguage').value;
 
-        let text = "*PERMINTAAN PENAWARAN HARGA (RFQ)*\n";
-        text += "_PT Wiratama Mitra Abadi_\n\n";
-        text += "*Produk*: " + productName + "\n";
-        text += "*Pemohon*: " + name + "\n";
-        text += "*Email*: " + email + "\n";
-        text += "*No Telp*: " + phone + "\n\n";
-        text += "*Pesan/Kebutuhan*:\n" + notes;
+        let text = language === 'en' ? "*REQUEST FOR QUOTATION (RFQ)*\nPT Wiratama Mitra Abadi\n\nDear Sales Team of PT Wiratama Mitra Abadi,\n\nWe, " + company + ", would like to request a formal quotation for the following product:\n\n*Product name*: " + productName + "\n*Quantity*: " + quantity + " unit(s)\n\n*Contact details*\nContact person: " + name + "\nCompany: " + company + "\nEmail: " + email + "\nPhone/WhatsApp: " + phone + "\n\n*Additional requirements*:\n" + notes + "\n\nPlease include your best price, availability, estimated delivery, quotation validity, warranty, and payment terms.\n\nThank you for your attention and cooperation.\n\nBest regards,\n" + name + "\n" + company + "\n" + phone + "\n" + email : "*PERMOHONAN PENAWARAN HARGA (RFQ)*\nPT Wiratama Mitra Abadi\n\nYth. Tim Sales PT Wiratama Mitra Abadi,\n\nDengan hormat, kami dari " + company + " bermaksud meminta penawaran harga resmi untuk produk berikut:\n\n*Nama produk*: " + productName + "\n*Jumlah*: " + quantity + " unit\n\n*Data pemohon*\nNama PIC: " + name + "\nPerusahaan: " + company + "\nEmail: " + email + "\nTelepon/WhatsApp: " + phone + "\n\n*Detail kebutuhan*:\n" + notes + "\n\nMohon diinformasikan harga terbaik, ketersediaan barang, estimasi pengiriman, masa berlaku penawaran, garansi, dan ketentuan pembayaran.\n\nAtas perhatian dan kerja sama yang baik, kami ucapkan terima kasih.\n\nHormat kami,\n" + name + "\n" + company + "\n" + phone + "\n" + email;
 
         const url = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
         window.open(url, '_blank');
@@ -540,27 +692,6 @@ We look forward to receiving your prompt response. Thank you.</textarea>
         }
     }
 
-    function sendRfqEmail(productName) {
-        const name = document.getElementById('rfqName').value || '-';
-        const email = document.getElementById('rfqEmail').value || '-';
-        const phone = document.getElementById('rfqPhone').value || '-';
-        const notes = document.getElementById('rfqNotes').value || '';
-
-        let body = "Halo Tim Sales PT Wiratama Mitra Abadi,\n\n";
-        body += "Pengajuan RFQ:\n";
-        body += "- Produk: " + productName + "\n";
-        body += "- Pemohon: " + name + "\n";
-        body += "- Email: " + email + "\n";
-        body += "- No Telp: " + phone + "\n\n";
-        body += "Detail Kebutuhan:\n" + notes + "\n\nTerima kasih.";
-
-        const url = "mailto:sales@wma.co.id?subject=" + encodeURIComponent("RFQ: " + productName + " - " + name) + "&body=" + encodeURIComponent(body);
-        window.location.href = url;
-        const modalEl = document.getElementById('rfqModal');
-        if (modalEl && bootstrap.Modal.getInstance(modalEl)) {
-            bootstrap.Modal.getInstance(modalEl).hide();
-        }
-    }
 </script>
 @endpush
 @endsection

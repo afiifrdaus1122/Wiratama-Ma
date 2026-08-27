@@ -121,6 +121,23 @@
     
     /* Mobile Compact Styling */
     @media (max-width: 768px) {
+        .product-hero {
+            padding: 64px 0;
+        }
+        .product-hero h1 {
+            font-size: 2rem !important;
+            line-height: 1.15;
+        }
+        .product-hero p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .sidebar-card {
+            border-radius: 12px;
+        }
+        .sidebar-card.p-4 {
+            padding: 1rem !important;
+        }
         .product-card-body-mobile {
             padding: 12px !important;
         }
@@ -143,6 +160,13 @@
             padding: 3px 8px;
             top: 8px;
             right: 8px;
+        }
+        .product-card .card-title {
+            overflow-wrap: anywhere;
+        }
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
         }
     }
 </style>
@@ -170,12 +194,14 @@
                         <input type="hidden" name="category" value="{{ request('category') }}">
                     @endif
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control bg-light border-0" placeholder="SKU or Name..." value="{{ request('search') }}" style="padding: 10px 15px; border-radius: 8px 0 0 8px;">
+                        <div class="position-relative grow">
+                            <input type="text" id="productSearch" name="search" autocomplete="off" class="form-control bg-light border-0 w-100" placeholder="SKU or Name..." value="{{ request('search') }}" style="padding: 10px 15px; border-radius: 8px 0 0 8px;">
+                            <div id="searchSuggestions" class="list-group position-absolute w-100 shadow-sm" style="z-index: 20; top: 100%;"></div>
+                        </div>
                         <button class="btn btn-primary px-3" type="submit" style="border-radius: 0 8px 8px 0;"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
             </div>
-
             <!-- Categories -->
             <div class="sidebar-card p-4 mb-4">
                 <h6 class="sidebar-title">Categories</h6>
@@ -269,3 +295,24 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('productSearch');
+    const suggestions = document.getElementById('searchSuggestions');
+    let timer;
+    input.addEventListener('input', function () {
+        clearTimeout(timer);
+        const query = input.value.trim();
+        if (query.length < 2) { suggestions.innerHTML = ''; return; }
+        timer = setTimeout(() => fetch('{{ route('products.autocomplete') }}?q=' + encodeURIComponent(query))
+            .then(response => response.json())
+            .then(products => {
+                suggestions.innerHTML = products.map(product => `<a href="${product.url}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><img src="${product.image || ''}" style="width: 38px; height: 38px; object-fit: contain;" onerror="this.style.display='none'"><span><strong>${product.name}</strong><small class="d-block text-muted">${product.brand || ''} ${product.sku || ''}</small></span></a>`).join('');
+            }), 250);
+    });
+    document.addEventListener('click', event => { if (!input.contains(event.target) && !suggestions.contains(event.target)) suggestions.innerHTML = ''; });
+});
+</script>
+@endpush
