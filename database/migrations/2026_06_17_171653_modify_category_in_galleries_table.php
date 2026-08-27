@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('galleries', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);
+            $table->dropColumn('category_id');
+            $table->string('gallery_category')->nullable()->after('title');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('galleries', function (Blueprint $table) {
+            $table->dropColumn('gallery_category');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+        });
+    }
+};
