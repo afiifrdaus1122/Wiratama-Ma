@@ -4,6 +4,34 @@
 @section('meta_description', $article->meta_description ?? Str::limit(strip_tags($article->content), 160))
 @section('meta_keywords', $article->meta_keywords ?? ($article->title . ', artikel, industrial news, PT Wiratama Mitra Abadi'))
 
+@push('structured_data')
+@php
+    $articleSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Article',
+        'headline' => $article->title,
+        'url' => route('blog.show', $article->slug),
+        'description' => Str::limit(strip_tags($article->content), 500),
+        'image' => $article->image ? [asset('storage/' . $article->image)] : [asset('images/logo.png')],
+        'datePublished' => optional($article->published_at ?? $article->created_at)->toAtomString(),
+        'dateModified' => optional($article->updated_at)->toAtomString(),
+        'author' => ['@type' => 'Organization', 'name' => 'PT Wiratama Mitra Abadi'],
+        'publisher' => ['@type' => 'Organization', 'name' => 'PT Wiratama Mitra Abadi', 'logo' => ['@type' => 'ImageObject', 'url' => asset('images/logo.png')]],
+    ];
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => route('blog.index')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $article->title, 'item' => route('blog.show', $article->slug)],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+<script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endpush
+
 @section('content')
 
 <!-- In a real app, you would yield these to the head section of your layout -->
@@ -263,5 +291,28 @@
         </div>
     </div>
 </div>
+@endif
+
+@if($related_products->isNotEmpty())
+<section class="py-5 border-top" aria-labelledby="related-products-title">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 id="related-products-title" class="h4 fw-bold text-dark mb-0">Produk terkait</h2>
+            <a href="{{ route('products.index') }}" class="text-primary text-decoration-none fw-semibold small">Lihat katalog <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="row g-3">
+            @foreach($related_products as $product)
+            <div class="col-md-3 col-6">
+                <article class="border rounded-3 h-100 p-3 bg-white">
+                    @if($product->image)
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="img-fluid mb-3" style="height: 120px; width: 100%; object-fit: contain;">
+                    @endif
+                    <h3 class="h6 fw-bold mb-0"><a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">{{ $product->name }}</a></h3>
+                </article>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 @endif
 @endsection

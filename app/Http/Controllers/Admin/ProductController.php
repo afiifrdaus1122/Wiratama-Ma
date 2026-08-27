@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\SubCategory;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -22,17 +23,16 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $subCategories = SubCategory::all();
-        return view('admin.products.create', compact('categories', 'subCategories'));
+        $articles = Article::where('is_published', true)->latest('published_at')->get();
+        return view('admin.products.create', compact('categories', 'subCategories', 'articles'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:50|unique:products',
             'category_id' => 'required',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'description' => 'required',
             'brand' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -43,10 +43,14 @@ class ProductController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string|max:255',
+            'article_ids' => 'nullable|array',
+            'article_ids.*' => 'integer|exists:articles,id',
         ]);
 
         $data = $request->all();
         $data['slug'] = Str::slug($request->name) . '-' . uniqid();
+        $data['sku'] = 'WMA-' . strtoupper(Str::random(10));
+        $data['stock'] = 0;
         $data['is_active'] = $request->has('is_active');
 
         // Handle dynamic category creation
@@ -81,6 +85,7 @@ class ProductController extends Controller
         }
 
         $product = Product::create($data);
+        $product->articles()->sync($request->input('article_ids', []));
 
         if ($request->has('attributes_name') && $request->has('attributes_value')) {
             foreach ($request->attributes_name as $key => $name) {
@@ -108,17 +113,17 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $subCategories = SubCategory::all();
-        return view('admin.products.edit', compact('product', 'categories', 'subCategories'));
+        $articles = Article::where('is_published', true)->latest('published_at')->get();
+        $product->load('articles');
+        return view('admin.products.edit', compact('product', 'categories', 'subCategories', 'articles'));
     }
 
     public function update(Request $request, Product $product)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:50|unique:products,sku,' . $product->id,
             'category_id' => 'required',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'description' => 'required',
             'brand' => 'nullable|string|max:255',
             'image' => 'nullable|image|max:2048',
@@ -128,9 +133,12 @@ class ProductController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'meta_keywords' => 'nullable|string|max:255',
+            'article_ids' => 'nullable|array',
+            'article_ids.*' => 'integer|exists:articles,id',
         ]);
 
         $data = $request->all();
+        unset($data['sku'], $data['stock']);
         
         if ($request->name !== $product->name) {
             $data['slug'] = Str::slug($request->name) . '-' . uniqid();
@@ -174,6 +182,7 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+        $product->articles()->sync($request->input('article_ids', []));
 
         $product->attributes()->delete();
         if ($request->has('attributes_name') && $request->has('attributes_value')) {

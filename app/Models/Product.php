@@ -4,6 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $sku
+ * @property string|null $description
+ * @property string|null $specification
+ * @property string|null $image
+ * @property string|null $datasheet
+ * @property string|null $brand
+ * @property string|null $video_url
+ * @property string $slug
+ * @property int|null $category_id
+ * @property int|null $sub_category_id
+ * @property float|int $price
+ * @property int $stock
+ * @property bool $is_active
+ * @property-read Category|null $category
+ * @property-read SubCategory|null $subCategory
+ * @property-read ProductQuestion[] $questions
+ * @property-read ProductAttribute[] $attributes
+ * @property-read ProductImage[] $images
+ * @property-read Article[] $articles
+ */
 class Product extends Model
 {
     protected $fillable = [
@@ -35,5 +58,10 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function articles()
+    {
+        return $this->belongsToMany(Article::class);
     }
 }

@@ -4,6 +4,47 @@
 @section('meta_description', $product->meta_description ?? Str::limit(strip_tags($product->description), 160))
 @section('meta_keywords', $product->meta_keywords ?? ($product->name . ', ' . ($product->brand ?? '') . ', ' . $product->category->name . ', PT Wiratama Mitra Abadi'))
 
+@push('structured_data')
+@php
+    $productSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Product',
+        'name' => $product->name,
+        'url' => route('products.show', $product->slug),
+        'description' => Str::limit(strip_tags($product->description), 500),
+        'image' => $product->image ? [asset('storage/' . $product->image)] : [asset('images/logo.png')],
+        'brand' => ['@type' => 'Brand', 'name' => $product->brand ?: 'PT Wiratama Mitra Abadi'],
+        'offers' => [
+            '@type' => 'Offer',
+            'url' => route('products.show', $product->slug),
+            'priceCurrency' => 'IDR',
+            'price' => (string) $product->price,
+            'availability' => $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+        ],
+    ];
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Products', 'item' => route('products.index')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $product->category->name, 'item' => route('products.index', ['category' => $product->category->slug])],
+            ['@type' => 'ListItem', 'position' => 4, 'name' => $product->name, 'item' => route('products.show', $product->slug)],
+        ],
+    ];
+    $faqQuestions = $product->questions->map(fn ($question) => [
+        '@type' => 'Question',
+        'name' => $question->question,
+        'acceptedAnswer' => ['@type' => 'Answer', 'text' => strip_tags($question->answer)],
+    ])->values()->all();
+@endphp
+<script type="application/ld+json">{!! json_encode($productSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+<script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@if($faqQuestions)
+<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $faqQuestions], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endif
+@endpush
+
 @section('content')
 <!-- Breadcrumb Navigation -->
 <div class="bg-light border-bottom">
@@ -66,17 +107,10 @@
 
         <!-- Right: Product Information & Cart -->
         <div class="col-lg-8">
-            <!-- Brand & Badges -->
+            <!-- Brand & Category -->
             <div class="d-flex align-items-center mb-2 product-meta">
                 <span class="text-uppercase fw-bold text-muted small tracking-wide me-3">{{ $product->brand ?? 'General' }}</span>
                 <span class="badge bg-primary text-white rounded-0 px-2 py-1 me-2"><i class="bi bi-tag-fill me-1"></i>{{ $product->category->name }}</span>
-                @if($product->stock > 0)
-                    <span class="badge bg-success text-white rounded-0 px-2 py-1"><i class="bi bi-check-circle me-1"></i>Ready</span>
-                @elseif($product->stock == 0)
-                    <span class="badge bg-warning text-dark rounded-0 px-2 py-1"><i class="bi bi-clock me-1"></i>Open PO</span>
-                @else
-                    <span class="badge bg-danger text-white rounded-0 px-2 py-1"><i class="bi bi-x-circle me-1"></i>Tidak Ready</span>
-                @endif
             </div>
             
             <!-- Title -->
@@ -418,6 +452,22 @@
             @endforeach
         </div>
     </div>
+    @endif
+
+    @if($related_articles->isNotEmpty())
+    <section class="row mt-5 pt-4 border-top" aria-labelledby="related-articles-title">
+        <div class="col-12 mb-3">
+            <h2 id="related-articles-title" class="h4 fw-bold text-dark">Artikel terkait {{ $product->category->name }}</h2>
+        </div>
+        @foreach($related_articles as $article)
+        <div class="col-md-4 mb-3">
+            <article class="border rounded-3 h-100 p-3 bg-white">
+                <h3 class="h6 fw-bold mb-2"><a href="{{ route('blog.show', $article->slug) }}" class="text-dark text-decoration-none">{{ $article->title }}</a></h3>
+                <p class="text-muted small mb-0">{{ Str::limit(strip_tags($article->content), 110) }}</p>
+            </article>
+        </div>
+        @endforeach
+    </section>
     @endif
 </div>
 

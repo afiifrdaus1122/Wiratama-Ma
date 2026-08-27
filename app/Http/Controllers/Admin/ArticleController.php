@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleCategory;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,8 @@ class ArticleController extends Controller
     public function create()
     {
         $categories = ArticleCategory::all();
-        return view('admin.articles.create', compact('categories'));
+        $products = Product::where('is_active', true)->latest()->get();
+        return view('admin.articles.create', compact('categories', 'products'));
     }
 
     public function store(Request $request)
@@ -39,6 +41,8 @@ class ArticleController extends Controller
             'meta_description'    => 'nullable|string',
             'meta_keywords'       => 'nullable|string|max:255',
             'is_published'        => 'boolean',
+            'product_ids'         => 'nullable|array',
+            'product_ids.*'       => 'integer|exists:products,id',
         ]);
 
         $data = $request->all();
@@ -62,7 +66,8 @@ class ArticleController extends Controller
             $data['published_at'] = now();
         }
 
-        Article::create($data);
+        $article = Article::create($data);
+        $article->products()->sync($request->input('product_ids', []));
 
         return redirect()->route('admin.articles.index')->with('success', 'Article created successfully.');
     }
@@ -70,7 +75,9 @@ class ArticleController extends Controller
     public function edit(Article $article)
     {
         $categories = ArticleCategory::all();
-        return view('admin.articles.edit', compact('article', 'categories'));
+        $products = Product::where('is_active', true)->latest()->get();
+        $article->load('products');
+        return view('admin.articles.edit', compact('article', 'categories', 'products'));
     }
 
     public function update(Request $request, Article $article)
@@ -89,6 +96,8 @@ class ArticleController extends Controller
             'meta_description'    => 'nullable|string',
             'meta_keywords'       => 'nullable|string|max:255',
             'is_published'        => 'boolean',
+            'product_ids'         => 'nullable|array',
+            'product_ids.*'       => 'integer|exists:products,id',
         ]);
 
         $data = $request->all();
@@ -121,6 +130,7 @@ class ArticleController extends Controller
         }
 
         $article->update($data);
+        $article->products()->sync($request->input('product_ids', []));
 
         return redirect()->route('admin.articles.index')->with('success', 'Article updated successfully.');
     }

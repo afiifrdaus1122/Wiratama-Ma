@@ -195,7 +195,7 @@
                     @endif
                     <div class="input-group">
                         <div class="position-relative grow">
-                            <input type="text" id="productSearch" name="search" autocomplete="off" class="form-control bg-light border-0 w-100" placeholder="SKU or Name..." value="{{ request('search') }}" style="padding: 10px 15px; border-radius: 8px 0 0 8px;">
+                            <input type="text" id="productSearch" name="search" autocomplete="off" class="form-control bg-light border-0 w-100" placeholder="Search product name..." value="{{ request('search') }}" style="padding: 10px 15px; border-radius: 8px 0 0 8px;">
                             <div id="searchSuggestions" class="list-group position-absolute w-100 shadow-sm" style="z-index: 20; top: 100%;"></div>
                         </div>
                         <button class="btn btn-primary px-3" type="submit" style="border-radius: 0 8px 8px 0;"><i class="bi bi-search"></i></button>
@@ -294,6 +294,27 @@
         </div>
     </div>
 </div>
+
+@if($activeCategory && $categoryArticles->isNotEmpty())
+<section class="container pb-5" aria-labelledby="category-articles-title">
+    <div class="border-top pt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 id="category-articles-title" class="h4 fw-bold mb-0">Artikel tentang {{ $activeCategory->name }}</h2>
+            <a href="{{ route('blog.index') }}" class="text-primary text-decoration-none fw-semibold small">Lihat semua artikel <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="row g-3">
+            @foreach($categoryArticles as $article)
+            <div class="col-md-4">
+                <article class="border rounded-3 h-100 p-3 bg-white">
+                    <h3 class="h6 fw-bold mb-2"><a href="{{ route('blog.show', $article->slug) }}" class="text-dark text-decoration-none">{{ $article->title }}</a></h3>
+                    <p class="text-muted small mb-0">{{ Str::limit(strip_tags($article->content), 110) }}</p>
+                </article>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 @endsection
 
 @push('scripts')
@@ -309,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
         timer = setTimeout(() => fetch('{{ route('products.autocomplete') }}?q=' + encodeURIComponent(query))
             .then(response => response.json())
             .then(products => {
-                suggestions.innerHTML = products.map(product => `<a href="${product.url}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><img src="${product.image || ''}" style="width: 38px; height: 38px; object-fit: contain;" onerror="this.style.display='none'"><span><strong>${product.name}</strong><small class="d-block text-muted">${product.brand || ''} ${product.sku || ''}</small></span></a>`).join('');
+                suggestions.innerHTML = products.map(product => `<a href="${product.url}" class="list-group-item list-group-item-action d-flex align-items-center gap-2"><img src="${product.image || ''}" style="width: 38px; height: 38px; object-fit: contain;" onerror="this.style.display='none'"><span><strong>${product.name}</strong><small class="d-block text-muted">${product.brand || ''}</small></span></a>`).join('');
             }), 250);
     });
     document.addEventListener('click', event => { if (!input.contains(event.target) && !suggestions.contains(event.target)) suggestions.innerHTML = ''; });

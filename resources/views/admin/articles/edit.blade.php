@@ -72,6 +72,17 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Related Products</label>
+                            @php $selectedProducts = old('product_ids', $article->products->pluck('id')->all()); @endphp
+                            <select name="product_ids[]" class="form-control related-products-select" multiple data-placeholder="-- Select related products --">
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}" {{ in_array($product->id, $selectedProducts) ? 'selected' : '' }}>{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Kosongkan pilihan untuk menghapus semua produk terkait.</small>
+                        </div>
+
+                        <div class="form-group">
                             <label>Thumbnail Image</label>
                             @if($article->image)
                                 <div class="mb-2">
@@ -109,6 +120,11 @@
                 theme: 'bootstrap4',
                 tags: true,
                 placeholder: "-- Select or Type New Category --",
+                allowClear: true
+            });
+            $('.related-products-select').select2({
+                theme: 'bootstrap4',
+                placeholder: "-- Select related products --",
                 allowClear: true
             });
         });

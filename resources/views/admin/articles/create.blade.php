@@ -71,6 +71,16 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Related Products</label>
+                            <select name="product_ids[]" class="form-control related-products-select" multiple data-placeholder="-- Select related products --">
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}" {{ in_array($product->id, old('product_ids', [])) ? 'selected' : '' }}>{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Pilih produk yang relevan dengan artikel ini.</small>
+                        </div>
+
+                        <div class="form-group">
                             <label>Thumbnail Image</label>
                             <input type="file" name="image" class="form-control-file" accept="image/*">
                         </div>
@@ -103,6 +113,11 @@
                 theme: 'bootstrap4',
                 tags: true,
                 placeholder: "-- Select or Type New Category --",
+                allowClear: true
+            });
+            $('.related-products-select').select2({
+                theme: 'bootstrap4',
+                placeholder: "-- Select related products --",
                 allowClear: true
             });
         });

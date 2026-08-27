@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -40,13 +41,24 @@ class ProductController extends Controller
         $categories = Category::withCount(['products' => function($q) {
             $q->where('is_active', true);
         }])->get();
+        $categoryArticles = $activeCategory
+            ? Article::where('is_published', true)
+                ->whereHas('products', fn ($query) => $query->whereIn('category_id', [$activeCategory->id]))
+                ->latest('published_at')
+                ->take(3)
+                ->get()
+            : collect();
 
-        return view('frontend.products.index', compact('products', 'categories', 'activeCategory'));
+        return view('frontend.products.index', compact('products', 'categories', 'activeCategory', 'categoryArticles'));
     }
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $product = Product::with([
+            'category',
+            'images',
+            'questions' => fn ($query) => $query->whereNotNull('answer')->where('answer', '!=', ''),
+        ])->where('slug', $slug)->where('is_active', true)->firstOrFail();
         
         $related_products = Product::where('is_active', true)
             ->where('category_id', $product->category_id)
@@ -54,8 +66,13 @@ class ProductController extends Controller
             ->inRandomOrder()
             ->take(4)
             ->get();
+        $related_articles = $product->articles()
+            ->where('is_published', true)
+            ->latest('published_at')
+            ->take(3)
+            ->get();
 
-        return view('frontend.products.show', compact('product', 'related_products'));
+        return view('frontend.products.show', compact('product', 'related_products', 'related_articles'));
     }
 
     public function autocomplete(Request $request)

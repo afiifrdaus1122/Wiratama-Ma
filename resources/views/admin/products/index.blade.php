@@ -28,7 +28,7 @@
                         <th width="80">Image</th>
                         <th>Product Details</th>
                         <th>Category & Brand</th>
-                        <th>Price & Stock</th>
+                        <th>Price</th>
                         <th>Status</th>
                         <th width="150">Action</th>
                     </tr>
@@ -47,7 +47,6 @@
                             </td>
                             <td>
                                 <strong>{{ $product->name }}</strong><br>
-                                <small class="text-muted">SKU: {{ $product->sku }}</small><br>
                                 <a href="{{ route('products.show', $product->slug) }}" target="_blank" class="text-muted small"><i class="fas fa-external-link-alt"></i> View</a>
                             </td>
                             <td>
@@ -55,8 +54,7 @@
                                 <span class="badge badge-info">{{ $product->brand ?? 'No Brand' }}</span>
                             </td>
                             <td>
-                                Rp {{ number_format($product->price, 0, ',', '.') }}<br>
-                                <small>Stock: {{ $product->stock }}</small>
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
                             </td>
                             <td>
                                 @if($product->is_active)

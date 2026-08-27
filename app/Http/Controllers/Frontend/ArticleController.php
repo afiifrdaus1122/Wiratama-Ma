@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleCategory;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -40,7 +41,12 @@ class ArticleController extends Controller
             ->latest()
             ->take(3)
             ->get();
+        $related_products = $article->products()
+            ->where('is_active', true)
+            ->latest()
+            ->take(4)
+            ->get();
 
-        return view('frontend.articles.show', compact('article', 'related_articles'));
+        return view('frontend.articles.show', compact('article', 'related_articles', 'related_products'));
     }
 }

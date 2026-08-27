@@ -22,15 +22,9 @@
                             <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}" required>
                         </div>
                         
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>SKU (Stock Keeping Unit)</label>
-                                <input type="text" name="sku" class="form-control" value="{{ old('sku', $product->sku) }}" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Brand</label>
-                                <input type="text" name="brand" class="form-control" value="{{ old('brand', $product->brand) }}">
-                            </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input type="text" name="brand" class="form-control" value="{{ old('brand', $product->brand) }}">
                         </div>
 
                         <div class="form-group">
@@ -109,8 +103,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Stock</label>
-                            <input type="number" name="stock" class="form-control" min="0" value="{{ old('stock', $product->stock) }}" required>
+                            <label>Related Articles</label>
+                            @php $selectedArticles = old('article_ids', $product->articles->pluck('id')->all()); @endphp
+                            <select name="article_ids[]" class="form-control select2-tags" multiple data-placeholder="-- Select related articles --">
+                                @foreach($articles as $article)
+                                    <option value="{{ $article->id }}" {{ in_array($article->id, $selectedArticles) ? 'selected' : '' }}>{{ $article->title }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Kosongkan pilihan untuk menghapus semua artikel terkait.</small>
                         </div>
 
                         <div class="form-group">

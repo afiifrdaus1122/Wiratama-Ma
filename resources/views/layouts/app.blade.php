@@ -16,9 +16,64 @@
     @endphp
 
     <!-- Dynamic SEO Meta Tags -->
-    <title>@yield('meta_title', $seoTitle)</title>
-    <meta name="description" content="@yield('meta_description', $seoDesc)">
-    <meta name="keywords" content="@yield('meta_keywords', $seoKeywords)">
+    @php
+        $pageTitle = trim($__env->yieldContent('meta_title', $seoTitle));
+        $pageDescription = trim($__env->yieldContent('meta_description', $seoDesc));
+        $pageKeywords = trim($__env->yieldContent('meta_keywords', $seoKeywords));
+        $canonicalUrl = url()->current();
+        if (request()->routeIs('products.index') && request()->filled('category')) {
+            $canonicalUrl = route('products.index', ['category' => request('category')]);
+        }
+        $socialImage = asset('images/logo.png');
+        if (isset($product) && $product->image) {
+            $socialImage = asset('storage/' . $product->image);
+        } elseif (isset($article) && $article->image) {
+            $socialImage = asset('storage/' . $article->image);
+        } elseif ($globalCompanyProfile && $globalCompanyProfile->logo) {
+            $socialImage = asset('storage/' . $globalCompanyProfile->logo);
+        }
+    @endphp
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDescription }}">
+    <meta name="keywords" content="{{ $pageKeywords }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+
+    <!-- Open Graph and Twitter Cards -->
+    <meta property="og:type" content="{{ isset($article) ? 'article' : (isset($product) ? 'product' : 'website') }}">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    <meta property="og:site_name" content="{{ $globalCompanyProfile->name ?? config('app.name', 'Wiratama-MA') }}">
+    <meta property="og:image" content="{{ $socialImage }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageDescription }}">
+    <meta name="twitter:image" content="{{ $socialImage }}">
+
+    @php
+        $organizationSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $globalCompanyProfile->name ?? 'PT Wiratama Mitra Abadi',
+            'url' => url('/'),
+            'logo' => asset('images/logo.png'),
+            'email' => $globalCompanyProfile->email ?? 'sales@wma.co.id',
+            'telephone' => $globalCompanyProfile->phone ?? null,
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $globalCompanyProfile->address ?? null,
+                'addressCountry' => 'ID',
+            ],
+            'sameAs' => collect([
+                $globalCompanyProfile->linkedin ?? null,
+                $globalCompanyProfile->facebook ?? null,
+                $globalCompanyProfile->instagram ?? null,
+                $globalCompanyProfile->youtube ?? null,
+            ])->filter()->values()->all(),
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($organizationSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION) !!}</script>
+    @stack('structured_data')
 
     <!-- Analytics -->
     @if($globalCompanyProfile && $globalCompanyProfile->google_analytics)
