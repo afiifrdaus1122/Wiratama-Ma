@@ -140,7 +140,14 @@
                                 {{ Str::limit(strip_tags($article->content), 70) }}
                             </p>
                             <div class="mt-auto">
-                                <a href="{{ route('blog.show', $article->slug) }}" class="btn btn-outline-primary rounded-pill btn-sm px-3 fw-bold" style="font-size: 0.75rem;">Read <i class="bi bi-arrow-right ms-1"></i></a>
+                                <div class="d-flex align-items-center justify-content-between gap-2">
+                                    <a href="{{ route('blog.show', $article->slug) }}" class="btn btn-outline-primary rounded-pill btn-sm px-3 fw-bold" style="font-size: 0.75rem;">Read <i class="bi bi-arrow-right ms-1"></i></a>
+                                    @if($article->products_count > 0)
+                                        <span class="text-muted small" title="Produk terkait">
+                                            <i class="bi bi-box-seam me-1"></i>{{ $article->products_count }} produk
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

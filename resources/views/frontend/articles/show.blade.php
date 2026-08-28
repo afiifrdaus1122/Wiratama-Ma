@@ -307,7 +307,12 @@
                     @if($product->image)
                         <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="img-fluid mb-3" style="height: 120px; width: 100%; object-fit: contain;">
                     @endif
-                    <h3 class="h6 fw-bold mb-0"><a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">{{ $product->name }}</a></h3>
+                    <h3 class="h6 fw-bold mb-2"><a href="{{ route('products.show', $product->slug) }}" class="text-dark text-decoration-none">{{ $product->name }}</a></h3>
+                    <p class="text-muted small mb-2">{{ $product->category?->name ?? 'Product' }}</p>
+                    <div class="d-flex align-items-center justify-content-between gap-2">
+                        <span class="text-primary fw-bold small">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                        <a href="{{ route('products.show', $product->slug) }}" class="small text-primary text-decoration-none fw-semibold">Spesifikasi <i class="bi bi-arrow-up-right"></i></a>
+                    </div>
                 </article>
             </div>
             @endforeach

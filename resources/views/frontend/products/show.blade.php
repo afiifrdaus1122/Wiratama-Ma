@@ -457,14 +457,27 @@
     @if($related_articles->isNotEmpty())
     <section class="row mt-5 pt-4 border-top" aria-labelledby="related-articles-title">
         <div class="col-12 mb-3">
-            <h2 id="related-articles-title" class="h4 fw-bold text-dark">Artikel terkait {{ $product->category->name }}</h2>
+            <div class="related-heading-line"></div>
+            <p class="related-eyebrow mb-2">Knowledge base</p>
+            <h2 id="related-articles-title" class="h4 fw-bold text-dark mb-0">Artikel terkait {{ $product->category->name }}</h2>
         </div>
         @foreach($related_articles as $article)
         <div class="col-md-4 mb-3">
-            <article class="border rounded-3 h-100 p-3 bg-white">
-                <h3 class="h6 fw-bold mb-2"><a href="{{ route('blog.show', $article->slug) }}" class="text-dark text-decoration-none">{{ $article->title }}</a></h3>
-                <p class="text-muted small mb-0">{{ Str::limit(strip_tags($article->content), 110) }}</p>
-            </article>
+                <article class="related-article-card h-100 bg-white position-relative">
+                    <a href="{{ route('blog.show', $article->slug) }}" class="related-article-image d-flex align-items-center justify-content-center" aria-label="Baca {{ $article->title }}">
+                        @if($article->image)
+                            <img src="{{ asset('storage/'.$article->image) }}" alt="{{ $article->title }}">
+                        @else
+                            <i class="bi bi-journal-text" aria-hidden="true"></i>
+                        @endif
+                    </a>
+                    <div class="p-3">
+                        <span class="related-article-number">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                        <h3 class="h6 fw-bold mb-3 pe-4"><a href="{{ route('blog.show', $article->slug) }}" class="text-dark text-decoration-none stretched-link">{{ $article->title }}</a></h3>
+                        <p class="text-muted small mb-0">{{ Str::limit(strip_tags($article->content), 110) }}</p>
+                        <span class="related-article-arrow" aria-hidden="true"><i class="bi bi-arrow-up-right"></i></span>
+                    </div>
+                </article>
         </div>
         @endforeach
     </section>
@@ -473,6 +486,89 @@
 
 <style>
     body { background-color: #fbfbfb; }
+    .related-heading-line {
+        width: 42px;
+        height: 3px;
+        background: #1455a3;
+        margin-bottom: 1rem;
+    }
+    .related-eyebrow {
+        color: #1455a3;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+    .related-article-card {
+        border: 1px solid #ded9d1;
+        border-radius: 0;
+        overflow: hidden;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .related-article-image {
+        height: 105px;
+        overflow: hidden;
+        background: #eef4fb;
+        border-bottom: 1px solid #e1e8f1;
+        color: #7398c5;
+        text-decoration: none;
+    }
+    .related-article-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 0.55rem;
+        transition: transform 0.35s ease;
+    }
+    .related-article-image i {
+        font-size: 2.5rem;
+        opacity: 0.65;
+    }
+    .related-article-card:hover .related-article-image img {
+        transform: scale(1.05);
+    }
+    .related-article-card::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 3px;
+        background: #1455a3;
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.25s ease;
+    }
+    .related-article-card:hover {
+        border-color: #1455a3;
+        box-shadow: 0 14px 28px rgba(38, 54, 64, 0.08);
+        transform: translateY(-4px);
+    }
+    .related-article-card:hover::before {
+        transform: scaleY(1);
+    }
+    .related-article-number {
+        display: block;
+        color: #1455a3;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.8rem;
+    }
+    .related-article-card h3 {
+        line-height: 1.35;
+    }
+    .related-article-arrow {
+        position: absolute;
+        right: 1.25rem;
+        bottom: 1.15rem;
+        color: #b56b3c;
+        opacity: 0;
+        transform: translate(-4px, 4px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .related-article-card:hover .related-article-arrow {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
     #rfqModal .modal-dialog { max-height: calc(100vh - 2rem); }
     #rfqModal .modal-content { max-height: calc(100vh - 2rem); }
     #rfqModal .modal-content > form { flex: 1 1 auto; min-height: 0; overflow-y: auto; }

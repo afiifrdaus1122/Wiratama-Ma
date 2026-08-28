@@ -57,6 +57,7 @@ class ProductController extends Controller
         $product = Product::with([
             'category',
             'images',
+            'attributes',
             'questions' => fn ($query) => $query->whereNotNull('answer')->where('answer', '!=', ''),
         ])->where('slug', $slug)->where('is_active', true)->firstOrFail();
         

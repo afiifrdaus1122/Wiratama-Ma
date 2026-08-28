@@ -4,10 +4,9 @@
 <style>
     /* Customer Login Specific Styles */
     .customer-login-bg {
-        background-image: linear-gradient(rgba(10, 30, 60, 0.7), rgba(10, 30, 60, 0.8)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        background-image: linear-gradient(105deg, rgba(7, 28, 55, 0.88) 0%, rgba(7, 28, 55, 0.58) 62%, rgba(7, 28, 55, 0.35) 100%), url('{{ optional(\App\Models\CompanyProfile::first())->hero_image ? asset('storage/' . optional(\App\Models\CompanyProfile::first())->hero_image) : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop' }}');
         background-size: cover;
         background-position: center;
-        background-attachment: fixed;
         min-height: calc(100vh - 80px);
         margin-top: -80px;
         display: flex;

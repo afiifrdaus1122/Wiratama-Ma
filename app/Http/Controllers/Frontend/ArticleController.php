@@ -12,7 +12,9 @@ class ArticleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Article::where('is_published', true)->with('category', 'user');
+        $query = Article::where('is_published', true)
+            ->with('category', 'user')
+            ->withCount('products');
 
         if ($request->filled('search')) {
             $query->where('title', 'like', '%' . $request->search . '%')
@@ -33,7 +35,10 @@ class ArticleController extends Controller
 
     public function show($slug)
     {
-        $article = Article::where('slug', $slug)->where('is_published', true)->firstOrFail();
+        $article = Article::with([
+            'category',
+            'products' => fn ($query) => $query->where('is_active', true),
+        ])->where('slug', $slug)->where('is_published', true)->firstOrFail();
         
         $related_articles = Article::where('is_published', true)
             ->where('article_category_id', $article->article_category_id)
@@ -41,11 +46,7 @@ class ArticleController extends Controller
             ->latest()
             ->take(3)
             ->get();
-        $related_products = $article->products()
-            ->where('is_active', true)
-            ->latest()
-            ->take(4)
-            ->get();
+        $related_products = $article->products->sortByDesc('created_at')->take(4);
 
         return view('frontend.articles.show', compact('article', 'related_articles', 'related_products'));
     }

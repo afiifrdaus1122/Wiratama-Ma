@@ -167,10 +167,24 @@
         background: white;
         border-radius: 12px;
         box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
-        padding: 24px 30px;
+        padding: 26px 30px;
         margin-top: -42px;
         position: relative;
         z-index: 10;
+    }
+
+    .stats-row {
+        display: grid;
+        gap: 0;
+    }
+
+    .stats-item {
+        min-width: 0;
+        padding: 0 24px;
+    }
+
+    .stats-item:not(:last-child) {
+        border-right: 1px solid #eef2f7;
     }
 
     .stat-number {
@@ -381,6 +395,17 @@
             padding: 16px 10px !important;
             border-radius: 16px !important;
         }
+        .stats-row {
+            grid-template-columns: 1fr !important;
+            gap: 0;
+        }
+        .stats-item {
+            padding: 13px 10px;
+        }
+        .stats-item:not(:last-child) {
+            border-right: 0;
+            border-bottom: 1px solid #eef2f7;
+        }
         .stat-number {
             font-size: 1.6rem !important;
         }
@@ -539,30 +564,34 @@
 @endif
 
 <!-- 2. Floating Stats -->
+@php
+    $hasCustomStats = isset($company->stats) && is_array($company->stats) && count($company->stats) > 0;
+    $statCount = $hasCustomStats ? count($company->stats) : 4;
+@endphp
 <div class="container" data-aos="fade-up" data-aos-delay="400">
     <div class="stats-bar">
-        <div class="row text-center g-4">
-            @if(isset($company->stats) && is_array($company->stats) && count($company->stats) > 0)
+        <div class="stats-row text-center" style="grid-template-columns: repeat({{ $statCount }}, minmax(0, 1fr));">
+            @if($hasCustomStats)
                 @foreach($company->stats as $index => $stat)
-                <div class="col-md-3 col-6 mb-3 mb-md-0 {{ $index < count($company->stats) - 1 ? 'border-md-end' : '' }} {{ $index % 2 == 0 ? 'border-end' : '' }} border-light">
+                <div class="stats-item">
                     <div class="stat-number">{{ $stat['number'] }}</div>
                     <div class="text-muted fw-bold small text-uppercase tracking-wide">{{ $stat['label'] }}</div>
                 </div>
                 @endforeach
             @else
-                <div class="col-md-3 col-6 mb-3 mb-md-0 border-end border-light">
+                <div class="stats-item">
                     <div class="stat-number">5.6K+</div>
                     <div class="text-muted fw-bold small text-uppercase tracking-wide">Satisfied Customers</div>
                 </div>
-                <div class="col-md-3 col-6 mb-3 mb-md-0 border-md-end border-light mobile-border-remove">
+                <div class="stats-item">
                     <div class="stat-number">15+</div>
                     <div class="text-muted fw-bold small text-uppercase tracking-wide">Years Experience</div>
                 </div>
-                <div class="col-md-3 col-6 border-end border-light">
+                <div class="stats-item">
                     <div class="stat-number">76</div>
                     <div class="text-muted fw-bold small text-uppercase tracking-wide">Business Partners</div>
                 </div>
-                <div class="col-md-3 col-6 mobile-border-remove">
+                <div class="stats-item">
                     <div class="stat-number">17</div>
                     <div class="text-muted fw-bold small text-uppercase tracking-wide">Global Brands</div>
                 </div>

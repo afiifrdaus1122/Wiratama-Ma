@@ -6,16 +6,21 @@
 @section('content')
 <style>
     :root {
-        --about-primary: #0f172a;
-        --about-accent: #0284c7;
-        --about-light: #f8fafc;
-        --about-border: #e2e8f0;
-        --about-muted: #64748b;
+        --about-primary: #172a38;
+        --about-accent: #1455a3;
+        --about-light: #f3f0eb;
+        --about-border: #ded9d1;
+        --about-muted: #68737a;
+        --about-ink: #263640;
+    }
+    .about-page {
+        background: var(--about-light);
+        color: var(--about-ink);
     }
     .about-hero {
-        background: linear-gradient(105deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.68) 58%, rgba(2, 132, 199, 0.42) 100%), url('{{ isset($company->hero_image) && $company->hero_image ? asset('storage/'.$company->hero_image) : 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop' }}') no-repeat center center;
+        background: linear-gradient(90deg, rgba(20, 37, 48, 0.91) 0%, rgba(20, 37, 48, 0.63) 52%, rgba(20, 37, 48, 0.18) 100%), url('{{ isset($company->hero_image) && $company->hero_image ? asset('storage/'.$company->hero_image) : 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop' }}') no-repeat center center;
         background-size: cover;
-        padding: 135px 0 125px;
+        padding: 154px 0 142px;
         color: white;
         position: relative;
     }
@@ -27,22 +32,33 @@
         background: rgba(255,255,255,0.22);
     }
     .about-hero .container {
-        max-width: 1080px;
+        max-width: 1180px;
         text-align: left;
     }
+    .about-hero .container::before {
+        content: 'PT WIRATAMA MITRA ABADI';
+        display: block;
+        color: #8db7e8;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        margin-bottom: 1.5rem;
+    }
     .about-title {
-        font-size: clamp(2.35rem, 5vw, 4.25rem);
-        font-weight: 800;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: clamp(2.7rem, 5vw, 5rem);
+        font-weight: 400;
         letter-spacing: 0;
-        line-height: 1.2;
-        max-width: 760px;
+        line-height: 1.05;
+        max-width: 820px;
     }
     .about-subtitle {
-        font-size: 1.08rem;
+        font-size: 1.04rem;
         font-weight: 400;
         color: rgba(255,255,255,0.82);
-        line-height: 1.6;
-        max-width: 680px;
+        line-height: 1.8;
+        max-width: 600px;
+        margin-left: 0 !important;
     }
     .about-hero .badge {
         background: rgba(255,255,255,0.12) !important;
@@ -53,29 +69,30 @@
     .glass-panel {
         background: #ffffff;
         border: 1px solid var(--about-border);
-        border-radius: 8px;
-        padding: 42px;
-        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+        border-radius: 0;
+        padding: 48px;
+        box-shadow: 0 18px 45px rgba(38, 54, 64, 0.06);
     }
     .value-card {
-        background: white;
-        border-radius: 10px;
-        padding: 26px;
+        background: transparent;
+        border-radius: 0;
+        padding: 28px 24px 26px;
         height: 100%;
-        transition: transform 0.25s ease, border-color 0.25s ease;
+        transition: transform 0.25s ease, background-color 0.25s ease;
         border: 1px solid var(--about-border);
     }
     .value-card:hover {
-        transform: translateY(-3px);
-        border-color: #93c5fd;
-        box-shadow: 0 10px 24px rgba(15,23,42,0.06);
+        transform: translateY(-4px);
+        background: #ffffff;
+        border-color: var(--about-accent);
+        box-shadow: 0 12px 28px rgba(38,54,64,0.07);
     }
     .value-icon {
         width: 48px;
         height: 48px;
-        background: rgba(2, 132, 199, 0.1);
+        background: #e5eef9;
         color: var(--about-accent);
-        border-radius: 10px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -83,21 +100,19 @@
         margin-bottom: 18px;
     }
     .gradient-text {
-        background: linear-gradient(90deg, #0284c7, #38bdf8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #8db7e8;
     }
     /* WYSIWYG Editor Output Styling */
     .wysiwyg-content {
-        color: #334155;
-        line-height: 1.75;
+        color: #52616a;
+        line-height: 1.85;
         font-size: 1rem;
     }
     .wysiwyg-content p {
         margin-bottom: 1.25rem;
     }
     .wysiwyg-content h1, .wysiwyg-content h2, .wysiwyg-content h3, .wysiwyg-content h4 {
-        color: #0f172a;
+        color: var(--about-primary);
         font-weight: 700;
         margin-top: 1.5rem;
         margin-bottom: 0.75rem;
@@ -114,21 +129,22 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
     .wysiwyg-content blockquote {
-        border-left: 4px solid #0284c7;
+        border-left: 3px solid var(--about-accent);
         padding-left: 1.25rem;
         margin: 1.5rem 0;
-        color: #64748b;
+        color: var(--about-muted);
         font-style: italic;
     }
     .about-company-card,
     .about-page-section {
         border: 1px solid var(--about-border) !important;
-        border-radius: 12px !important;
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05) !important;
+        border-radius: 0 !important;
+        box-shadow: 0 16px 35px rgba(38, 54, 64, 0.06) !important;
     }
     .about-section-heading {
         color: var(--about-primary);
-        font-size: 2rem;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2.15rem;
         letter-spacing: 0;
     }
     .about-section-label {
@@ -175,12 +191,12 @@
         line-height: 1.7;
     }
     .about-page-section {
-        background: #f8fafc;
+        background: var(--about-light);
     }
     @media (max-width: 768px) {
-        .about-title { font-size: 2.35rem !important; }
+        .about-title { font-size: 2.75rem !important; }
         .about-hero { padding: 90px 0 88px !important; }
-        .glass-panel { padding: 20px 15px !important; }
+        .glass-panel { padding: 30px 22px !important; }
         .showcase-img-container { height: 240px !important; }
         .display-6 { font-size: 1.65rem !important; }
         .about-company-card { padding: 20px 16px !important; }
