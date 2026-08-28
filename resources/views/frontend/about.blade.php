@@ -9,60 +9,78 @@
         --about-primary: #0f172a;
         --about-accent: #0284c7;
         --about-light: #f8fafc;
+        --about-border: #e2e8f0;
+        --about-muted: #64748b;
     }
     .about-hero {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 132, 199, 0.9)), url('{{ isset($company->hero_image) && $company->hero_image ? asset('storage/'.$company->hero_image) : 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop' }}') no-repeat center center;
+        background: linear-gradient(105deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.68) 58%, rgba(2, 132, 199, 0.42) 100%), url('{{ isset($company->hero_image) && $company->hero_image ? asset('storage/'.$company->hero_image) : 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop' }}') no-repeat center center;
         background-size: cover;
-        background-attachment: fixed;
-        padding: 110px 0 50px;
+        padding: 135px 0 125px;
         color: white;
         position: relative;
     }
+    .about-hero::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: 1px;
+        background: rgba(255,255,255,0.22);
+    }
+    .about-hero .container {
+        max-width: 1080px;
+        text-align: left;
+    }
     .about-title {
-        font-size: 2.25rem;
+        font-size: clamp(2.35rem, 5vw, 4.25rem);
         font-weight: 800;
-        letter-spacing: -1px;
+        letter-spacing: 0;
         line-height: 1.2;
+        max-width: 760px;
     }
     .about-subtitle {
-        font-size: 1.2rem;
-        font-weight: 300;
-        opacity: 0.9;
+        font-size: 1.08rem;
+        font-weight: 400;
+        color: rgba(255,255,255,0.82);
         line-height: 1.6;
-        max-width: 800px;
+        max-width: 680px;
+    }
+    .about-hero .badge {
+        background: rgba(255,255,255,0.12) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: none !important;
     }
     .glass-panel {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        border-radius: 24px;
-        padding: 40px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        background: #ffffff;
+        border: 1px solid var(--about-border);
+        border-radius: 8px;
+        padding: 42px;
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
     }
     .value-card {
         background: white;
-        border-radius: 20px;
-        padding: 30px;
+        border-radius: 10px;
+        padding: 26px;
         height: 100%;
-        transition: all 0.4s ease;
-        border: 1px solid rgba(0,0,0,0.03);
+        transition: transform 0.25s ease, border-color 0.25s ease;
+        border: 1px solid var(--about-border);
     }
     .value-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        transform: translateY(-3px);
+        border-color: #93c5fd;
+        box-shadow: 0 10px 24px rgba(15,23,42,0.06);
     }
     .value-icon {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         background: rgba(2, 132, 199, 0.1);
         color: var(--about-accent);
-        border-radius: 16px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
-        margin-bottom: 20px;
+        font-size: 1.4rem;
+        margin-bottom: 18px;
     }
     .gradient-text {
         background: linear-gradient(90deg, #0284c7, #38bdf8);
@@ -72,8 +90,8 @@
     /* WYSIWYG Editor Output Styling */
     .wysiwyg-content {
         color: #334155;
-        line-height: 1.8;
-        font-size: 1.05rem;
+        line-height: 1.75;
+        font-size: 1rem;
     }
     .wysiwyg-content p {
         margin-bottom: 1.25rem;
@@ -102,32 +120,90 @@
         color: #64748b;
         font-style: italic;
     }
+    .about-company-card,
+    .about-page-section {
+        border: 1px solid var(--about-border) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05) !important;
+    }
+    .about-section-heading {
+        color: var(--about-primary);
+        font-size: 2rem;
+        letter-spacing: 0;
+    }
+    .about-section-label {
+        color: var(--about-accent);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+    .about-hero + section {
+        margin-top: 0 !important;
+    }
+    .about-hero + section .glass-panel {
+        margin-top: -48px;
+        position: relative;
+        z-index: 2;
+    }
+    .about-hero + section .border-end-md,
+    .about-hero + section .border-start-md {
+        border-color: var(--about-border) !important;
+    }
+    .about-hero + section .bi-eye-fill,
+    .about-hero + section .bi-bullseye {
+        font-size: 1.45rem !important;
+        color: var(--about-accent) !important;
+    }
+    .about-company-card {
+        background: #ffffff !important;
+    }
+    .about-company-card .company-logo-wrapper {
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+    .about-company-card h2 {
+        font-size: 1.55rem !important;
+    }
+    .value-card {
+        box-shadow: none;
+    }
+    .value-card h5 {
+        font-size: 1rem;
+    }
+    .value-card p {
+        line-height: 1.7;
+    }
+    .about-page-section {
+        background: #f8fafc;
+    }
     @media (max-width: 768px) {
-        .about-title { font-size: 1.85rem !important; }
-        .about-hero { padding: 90px 0 40px !important; }
+        .about-title { font-size: 2.35rem !important; }
+        .about-hero { padding: 90px 0 88px !important; }
         .glass-panel { padding: 20px 15px !important; }
         .showcase-img-container { height: 240px !important; }
         .display-6 { font-size: 1.65rem !important; }
         .about-company-card { padding: 20px 16px !important; }
+        .about-section-heading { font-size: 1.6rem; }
     }
 </style>
 
 <!-- Hero Section -->
-<section class="about-hero text-center">
+<section class="about-hero">
     <div class="container" data-aos="fade-up" data-aos-duration="1000">
-        <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-4 fw-bold shadow-sm" style="letter-spacing: 1px;">COMPANY PROFILE</span>
-        <h1 class="about-title mb-4">{!! $company->about_page_title ?? 'Empowering Industry <br>Through <span class="text-info">Precision</span>' !!}</h1>
-        <p class="about-subtitle mx-auto">{{ $company->about_summary ?? 'PT Wiratama Mitra Abadi is a premier provider of industrial automation, instrumentation, and control solutions. We are dedicated to enhancing operational efficiency and precision across various industrial sectors in Indonesia.' }}</p>
+        <span class="badge bg-white text-dark rounded-pill px-3 py-2 mb-4 fw-bold shadow-sm" style="letter-spacing: 1px;">ABOUT WIRATAMA</span>
+        <h1 class="about-title mb-4">{!! $company->about_page_title ?? 'Industrial Solutions Built Around Your Needs' !!}</h1>
+        <p class="about-subtitle mx-auto">{{ $company->about_summary ?? 'PT Wiratama Mitra Abadi supplies industrial instruments and technical solutions that help customers measure, control, and improve their operations.' }}</p>
     </div>
 </section>
 
 <!-- Vision & Mission Section -->
-<section class="py-5 bg-light" style="margin-top: -50px; position: relative; z-index: 10;">
+<section class="py-5 bg-light">
     <div class="container">
         <div class="glass-panel" data-aos="fade-up">
             <div class="row g-5">
                 <div class="col-md-6 border-end-md border-light">
-                    <div class="pe-md-4">
+                    <div class="pe-md-4 h-100">
                         <div class="d-flex align-items-center mb-3">
                             <i class="bi bi-eye-fill text-primary fs-2 me-3"></i>
                             <h3 class="fw-bold mb-0">Our Vision</h3>
@@ -136,13 +212,13 @@
                             @if(!empty(trim(strip_tags($company->vision ?? ''))))
                                 {!! $company->vision !!}
                             @else
-                                <p>To be the most trusted and reliable partner in industrial automation and instrumentation, delivering innovative solutions that drive efficiency and growth.</p>
+                                <p>To be a trusted partner for industrial measurement, instrumentation, and technical solutions in Indonesia.</p>
                             @endif
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="ps-md-4">
+                    <div class="ps-md-4 h-100 border-start-md border-light">
                         <div class="d-flex align-items-center mb-3">
                             <i class="bi bi-bullseye text-danger fs-2 me-3"></i>
                             <h3 class="fw-bold mb-0">Our Mission</h3>
@@ -151,7 +227,7 @@
                             @if(!empty(trim(strip_tags($company->mission ?? ''))))
                                 {!! $company->mission !!}
                             @else
-                                <p>Providing top-tier products, unparalleled technical expertise, and exceptional customer service to solve complex industrial challenges and optimize plant performance.</p>
+                                <p>To provide the right products, clear technical guidance, and dependable service for every customer application.</p>
                             @endif
                         </div>
                     </div>
@@ -223,9 +299,9 @@
 <section class="py-5 bg-light">
     <div class="container py-4" data-aos="fade-up">
         <div class="text-center mb-5">
-            <span class="badge bg-primary text-white rounded-pill px-3 py-2 mb-3 fw-bold" style="letter-spacing: 1px;">CORE VALUES</span>
-            <h2 class="fw-bold display-6 mb-2">Our Core Values</h2>
-            <p class="text-muted fs-5">The core principles guiding our service and commitment</p>
+            <span class="about-section-label mb-3 d-inline-block">How We Work</span>
+            <h2 class="fw-bold display-6 mb-2">Simple, Reliable, Technical</h2>
+            <p class="text-muted fs-5">The principles behind our products and service</p>
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-11">
@@ -244,36 +320,37 @@
 <section class="py-5 my-3">
     <div class="container">
         <div class="text-center mb-5" data-aos="fade-up">
-            <h2 class="fw-bold display-5 mb-3">Why Choose Us?</h2>
-            <p class="text-muted fs-5">The pillars of our commitment to excellence</p>
+            <span class="about-section-label mb-3 d-inline-block">Why Wiratama</span>
+            <h2 class="fw-bold display-5 mb-3">Support for the Work That Matters</h2>
+            <p class="text-muted fs-5">From product selection to after-sales support</p>
         </div>
         <div class="row g-4">
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
                 <div class="value-card">
                     <div class="value-icon"><i class="bi bi-award-fill"></i></div>
-                    <h5 class="fw-bold mb-3">Quality Assurance</h5>
-                    <p class="text-muted small mb-0">We supply only premium, internationally certified products from globally recognized brands.</p>
+                    <h5 class="fw-bold mb-3">Quality Products</h5>
+                        <p class="text-muted small mb-0">We source dependable instruments and components from recognized industrial brands.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
                 <div class="value-card">
                     <div class="value-icon"><i class="bi bi-gear-fill"></i></div>
-                    <h5 class="fw-bold mb-3">Technical Expertise</h5>
-                    <p class="text-muted small mb-0">Our team consists of highly skilled engineers ready to provide tailored technical solutions.</p>
+                    <h5 class="fw-bold mb-3">Technical Guidance</h5>
+                        <p class="text-muted small mb-0">We help customers determine specifications that match the application and operating conditions.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
                 <div class="value-card">
                     <div class="value-icon"><i class="bi bi-headset"></i></div>
-                    <h5 class="fw-bold mb-3">Excellent Support</h5>
-                    <p class="text-muted small mb-0">From pre-sales consultation to after-sales service, we are committed to your success.</p>
+                    <h5 class="fw-bold mb-3">Complete Service</h5>
+                        <p class="text-muted small mb-0">Consultation, repair, setting, calibration, installation, and commissioning support.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
                 <div class="value-card">
                     <div class="value-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-                    <h5 class="fw-bold mb-3">Fast Delivery</h5>
-                    <p class="text-muted small mb-0">Optimized logistics network ensuring timely delivery of critical components to minimize downtime.</p>
+                    <h5 class="fw-bold mb-3">Long-Term Partnership</h5>
+                        <p class="text-muted small mb-0">A responsive team focused on practical solutions and lasting customer relationships.</p>
                 </div>
             </div>
         </div>

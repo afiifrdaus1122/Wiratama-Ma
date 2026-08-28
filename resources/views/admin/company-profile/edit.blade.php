@@ -154,7 +154,19 @@
                                     @endfor
                                 </div>
 
-                                <h5 class="text-primary border-bottom pb-2 mb-3 mt-4">5. Contact Page Header Details</h5>
+                                <h5 class="text-primary border-bottom pb-2 mb-3 mt-4">5. Who We Are Image (Homepage)</h5>
+                                <div class="form-group">
+                                    <label class="fw-bold">Homepage About Image</label>
+                                    @if($profile->about_image)
+                                        <div class="mb-2">
+                                            <img src="{{ asset('storage/'.$profile->about_image) }}" alt="Homepage About" style="height: 110px; width: 180px; object-fit: cover; border-radius: 8px;">
+                                        </div>
+                                    @endif
+                                    <input type="file" name="about_image" class="form-control-file" accept="image/*">
+                                    <small class="text-muted">Gambar utama pada section Who We Are di homepage.</small>
+                                </div>
+
+                                <h5 class="text-primary border-bottom pb-2 mb-3 mt-4">6. Contact Page Header Details</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -241,11 +253,11 @@
                                         </div>
                                     @elseif($profile->about_image)
                                         <div class="mb-2">
-                                            <img src="{{ asset('storage/'.$profile->profile_image ?? $profile->about_image) }}" style="height: 100px; border-radius: 8px;">
+                                            <img src="{{ asset('storage/'.$profile->about_image) }}" alt="About showcase" style="height: 100px; border-radius: 8px; object-fit: cover;">
                                         </div>
                                     @endif
                                     <input type="file" name="about_images[]" class="form-control-file" accept="image/*" multiple>
-                                    <small class="text-muted">Unggah beberapa foto dokumentasi/fasilitas untuk ditampilkan di halaman About Us.</small>
+                                    <small class="text-muted">Unggah beberapa foto dokumentasi/fasilitas untuk ditampilkan pada showcase di halaman About Us.</small>
                                 </div>
                             </div>
 

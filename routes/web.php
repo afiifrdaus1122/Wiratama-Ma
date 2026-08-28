@@ -51,7 +51,7 @@ Route::post('admin/login', [App\Http\Controllers\Auth\LoginController::class, 'l
 Route::post('admin/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 // Admin Panel Routes
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function() {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.backup'])->group(function() {
     Route::get('/', function() { return redirect()->route('admin.dashboard'); });
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);

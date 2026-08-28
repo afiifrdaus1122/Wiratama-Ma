@@ -7,6 +7,16 @@
 @stop
 
 @section('content')
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <strong>Banner belum tersimpan.</strong>
+            <ul class="mb-0 mt-2">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="card card-primary">
         <div class="card-header">
             <h3 class="card-title">Banner Configuration</h3>
@@ -18,10 +28,10 @@
                     <div class="form-group">
                         <label>Page to Display</label>
                         <select name="page" class="form-control">
-                            <option value="home">Home (Beranda)</option>
-                            <option value="products">Products</option>
-                            <option value="about">About Us</option>
-                            <option value="contact">Contact</option>
+                            <option value="home" {{ old('page', 'home') == 'home' ? 'selected' : '' }}>Home (Beranda)</option>
+                            <option value="products" {{ old('page') == 'products' ? 'selected' : '' }}>Products</option>
+                            <option value="about" {{ old('page') == 'about' ? 'selected' : '' }}>About Us</option>
+                            <option value="contact" {{ old('page') == 'contact' ? 'selected' : '' }}>Contact</option>
                         </select>
                     </div>
 
@@ -48,6 +58,13 @@
                         <div class="col-md-6 form-group">
                             <label>Call to Action URL</label>
                             <input type="text" name="cta_url" class="form-control" value="{{ old('cta_url') }}" placeholder="e.g. /products">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Open Button Link</label>
+                            <select name="cta_target" class="form-control">
+                                <option value="_self" {{ old('cta_target', '_self') == '_self' ? 'selected' : '' }}>Same Tab</option>
+                                <option value="_blank" {{ old('cta_target') == '_blank' ? 'selected' : '' }}>New Tab</option>
+                            </select>
                         </div>
                     </div>
 
@@ -103,13 +120,13 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Sort Order</label>
-                            <input type="number" name="sort_order" class="form-control" value="0">
+                            <input type="number" name="sort_order" class="form-control" value="{{ old('sort_order', 0) }}">
                         </div>
                     </div>
 
                     <div class="form-group mt-4">
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" checked>
+                            <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" checked>
                             <label class="custom-control-label" for="is_active">Publish this banner</label>
                         </div>
                     </div>

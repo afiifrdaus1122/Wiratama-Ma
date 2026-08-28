@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="position-relative py-5" style="background: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat; min-height: 400px; display: flex; align-items: center;">
+@php
+    $heroBackground = optional(\App\Models\CompanyProfile::first())->hero_image;
+    $heroBackgroundUrl = $heroBackground
+        ? asset('storage/' . $heroBackground)
+        : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop';
+@endphp
+<div class="position-relative py-5" style="background: url('{{ $heroBackgroundUrl }}') center/cover no-repeat; min-height: 400px; display: flex; align-items: center; overflow: hidden;">
     <!-- Dark gradient overlay -->
     <div class="position-absolute top-0 inset-s-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(2, 12, 39, 0.92) 0%, rgba(13, 71, 161, 0.75) 100%);"></div>
     <!-- High-tech dot grid pattern overlay -->

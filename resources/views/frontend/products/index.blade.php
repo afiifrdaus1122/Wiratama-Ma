@@ -11,9 +11,17 @@
 @endif
 
 @section('content')
+@php
+    $heroBackground = optional(\App\Models\CompanyProfile::first())->hero_image;
+    $heroBackgroundUrl = $heroBackground
+        ? asset('storage/' . $heroBackground)
+        : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop';
+@endphp
 <style>
     .product-hero {
-        background: linear-gradient(135deg, rgba(13, 71, 161, 0.85) 0%, rgba(27, 38, 59, 0.95) 100%), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+        background-image: linear-gradient(135deg, rgba(13, 71, 161, 0.85) 0%, rgba(27, 38, 59, 0.95) 100%), url('{{ $heroBackgroundUrl }}');
+        background-position: center;
+        background-repeat: no-repeat;
         background-size: cover;
         padding: 100px 0;
         color: white;

@@ -498,6 +498,29 @@
         </nav>
 
         <main>
+            @php
+                $menuPage = request()->routeIs('products.*') ? 'products'
+                    : (request()->routeIs('about') ? 'about'
+                    : (request()->routeIs('contact.*') ? 'contact' : null));
+                $menuHeroBanners = $menuPage
+                    ? \App\Models\HeroBanner::where('page', $menuPage)
+                        ->where('is_active', true)
+                        ->where(function ($query) {
+                            $query->whereNull('start_date')->orWhere('start_date', '<=', now());
+                        })
+                        ->where(function ($query) {
+                            $query->whereNull('end_date')->orWhere('end_date', '>=', now());
+                        })
+                        ->orderBy('sort_order')
+                        ->get()
+                    : collect();
+            @endphp
+            @if($menuPage)
+                @php
+                    $sharedHeroImage = optional(\App\Models\CompanyProfile::first())->hero_image;
+                @endphp
+                @include('frontend.partials.menu-hero-banners')
+            @endif
             @yield('content')
         </main>
 

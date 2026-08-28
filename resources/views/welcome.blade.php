@@ -21,22 +21,26 @@
     }
 
     .hero-section {
-        background: linear-gradient(135deg, rgba(13, 71, 161, 0.95) 0%, rgba(27, 38, 59, 0.95) 100%), 
+        background: linear-gradient(105deg, rgba(7, 28, 55, 0.88) 0%, rgba(7, 28, 55, 0.58) 62%, rgba(7, 28, 55, 0.35) 100%), 
                     url('{{ isset($company->hero_image) && $company->hero_image ? asset('storage/'.$company->hero_image) : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop' }}') no-repeat center center;
         background-size: cover;
-        background-attachment: fixed;
-        padding: 160px 0 140px;
+        background-position: center;
+        padding: 135px 0 110px;
         color: white;
         position: relative;
         overflow: hidden;
+        box-sizing: border-box;
+        height: clamp(520px, 72vh, 720px);
+        min-height: 0 !important;
     }
 
     .hero-title {
         font-weight: 800;
-        font-size: 3.5rem;
+        font-size: clamp(2.35rem, 5vw, 4rem);
         line-height: 1.2;
         margin-bottom: 1.5rem;
-        letter-spacing: -1px;
+        letter-spacing: 0;
+        max-width: 760px;
     }
 
     .hero-subtitle {
@@ -59,23 +63,42 @@
         background-repeat: no-repeat;
         color: white;
         position: relative;
+        isolation: isolate;
         overflow: hidden;
+        height: clamp(520px, 72vh, 720px);
+        min-height: 0 !important;
+        box-sizing: border-box;
     }
 
     .hero-carousel-item::after {
         content: '';
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
+        inset: 0;
         background: var(--overlay-bg, rgba(0,0,0,0.5));
-        z-index: 1;
+        z-index: 0;
+        pointer-events: none;
     }
 
     .hero-carousel-content {
         position: relative;
-        z-index: 2;
-        height: 100%;
+        z-index: 1;
+        min-height: 100%;
         display: flex;
         align-items: center;
+        padding-top: clamp(5rem, 12vh, 8rem);
+        padding-bottom: clamp(5rem, 12vh, 8rem);
+    }
+
+    .hero-carousel-content,
+    .hero-section > .container {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .hero-carousel-content [data-aos],
+    .hero-section [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
     }
 
     .hero-title {
@@ -142,10 +165,10 @@
     /* Floating Stats Bar */
     .stats-bar {
         background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        padding: 30px;
-        margin-top: -60px;
+        border-radius: 12px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
+        padding: 24px 30px;
+        margin-top: -42px;
         position: relative;
         z-index: 10;
     }
@@ -318,7 +341,19 @@
     @media (max-width: 768px) {
         .hero-carousel-item {
             background-image: var(--mobile-bg, var(--desktop-bg)) !important;
+            height: 440px !important;
             min-height: 440px !important;
+        }
+        .hero-carousel-content {
+            min-height: 100%;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+
+        .hero-section {
+            height: 440px;
+            min-height: 440px !important;
+            padding: 100px 0 70px;
         }
         .hero-title {
             font-size: 1.85rem !important;
@@ -420,10 +455,14 @@
                 $desktopBg = '';
                 $mobileBg = '';
                 if ($banner->background_type == 'image') {
-                    if ($banner->desktop_image) {
+                    if ($company->hero_image ?? null) {
+                        $desktopBg = asset('storage/' . $company->hero_image);
+                    } elseif ($banner->desktop_image) {
                         $desktopBg = asset('storage/' . $banner->desktop_image);
                     }
-                    if ($banner->mobile_image) {
+                    if (($company->hero_image ?? null)) {
+                        $mobileBg = $desktopBg;
+                    } elseif ($banner->mobile_image) {
                         $mobileBg = asset('storage/' . $banner->mobile_image);
                     } else {
                         $mobileBg = $desktopBg;
@@ -590,7 +629,9 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-6" data-aos="fade-right">
                 <div class="position-relative">
-                    @if(isset($company->about_images) && is_array($company->about_images) && count($company->about_images) > 0)
+                    @if(isset($company->about_image) && $company->about_image)
+                        <img src="{{ asset('storage/'.$company->about_image) }}" class="img-fluid object-fit-cover w-100" alt="About Us" style="border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); height: 480px;">
+                    @elseif(isset($company->about_images) && is_array($company->about_images) && count($company->about_images) > 0)
                         <div id="aboutCarousel" class="carousel slide carousel-fade overflow-hidden" data-bs-ride="carousel" style="border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);">
                             <div class="carousel-inner">
                                 @foreach($company->about_images as $index => $img)
@@ -617,9 +658,9 @@
             </div>
             <div class="col-lg-6 ps-lg-5" data-aos="fade-left">
                 <span class="section-subtitle mb-2">Who We Are</span>
-                <h2 class="section-title mb-3" style="font-size: 2.2rem;">{{ $company->about_title ?? 'You Deserve Our Best Services' }}</h2>
+                <h2 class="section-title mb-3" style="font-size: 2.2rem;">{{ $company->about_title ?? 'Your Trusted Industrial Partner' }}</h2>
                 <p class="text-muted mb-3" style="line-height: 1.6;">
-                    {{ $company->about_summary ?? 'Established with a vision to be the leading provider of industrial automation and instrumentation solutions. We combine advanced technology with proven services to solve complex measurement and control challenges.' }}
+                    {{ $company->about_summary ?? 'Wiratama Mitra Abadi provides industrial instruments, measurement solutions, and technical support for businesses across Indonesia. We help customers select the right specification and keep their operations running reliably.' }}
                 </p>
                 <div class="row g-2 mt-1">
                     @if(isset($company->features) && is_array($company->features) && count($company->features) > 0)
@@ -627,7 +668,7 @@
                         <div class="col-12">
                             <div class="feature-card-small d-flex align-items-start gap-3">
                                 <div class="feature-icon-wrapper">
-                                    <i class="bi {{ $index == 0 ? 'bi-award' : ($index == 1 ? 'bi-lightning' : 'bi-shield-check') }} text-primary fs-4"></i>
+                                    <i class="bi {{ ['bi-chat-square-text', 'bi-tools', 'bi-speedometer2', 'bi-box-seam', 'bi-sliders', 'bi-building-check'][$index % 6] }} text-primary fs-4"></i>
                                 </div>
                                 <div>
                                     <h6 class="fw-bold text-dark mb-1">{{ $feature['title'] }}</h6>
@@ -644,7 +685,7 @@
                                 </div>
                                 <div>
                                     <h6 class="fw-bold text-dark mb-1">Excellent Quality</h6>
-                                    <p class="text-muted small mb-0">Without excellent parts, you could be stuck in your driveway or worse. We brings only genuine and excellent parts for your satisfaction.</p>
+                                    <p class="text-muted small mb-0">Reliable products from established industrial brands, selected for demanding applications.</p>
                                 </div>
                             </div>
                         </div>
@@ -655,7 +696,7 @@
                                 </div>
                                 <div>
                                     <h6 class="fw-bold text-dark mb-1">Innovative Solution</h6>
-                                    <p class="text-muted small mb-0">We support and dispatch new services so that the best solutions tend to be a combination of technology and services</p>
+                                    <p class="text-muted small mb-0">Practical recommendations that combine the right instrument, specification, and application.</p>
                                 </div>
                             </div>
                         </div>
@@ -666,13 +707,13 @@
                                 </div>
                                 <div>
                                     <h6 class="fw-bold text-dark mb-1">Trusted Partner</h6>
-                                    <p class="text-muted small mb-0">Without excellent parts, you could be stuck in your driveway or worse. we brings only genuine and excellent parts for your satisfaction.</p>
+                                    <p class="text-muted small mb-0">Consultation, repair, calibration, installation, and after-sales support from one team.</p>
                                 </div>
                             </div>
                         </div>
                     @endif
                 </div>
-                <a href="{{ route('about') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 mt-3 fw-bold">Read Full Profile</a>
+                <a href="{{ route('about') }}" class="btn btn-outline-primary rounded-pill px-4 py-2 mt-3 fw-bold">Read About Us <i class="bi bi-arrow-right ms-2"></i></a>
             </div>
         </div>
     </div>
@@ -687,7 +728,7 @@
         </div>
         
         <div class="row g-4">
-            @forelse($categories ?? [] as $index => $cat)
+            @forelse($categories as $index => $cat)
             @if(Str::contains(strtolower($cat->name), 'oil skimmer')) @continue @endif
             @php
                 $catNameLower = strtolower($cat->name);
@@ -741,7 +782,7 @@
         </div>
         
         <div class="row g-4">
-            @forelse($latestProducts ?? [] as $index => $product)
+            @forelse($latestProducts as $index => $product)
             <div class="col-lg-2 col-md-4 col-6" data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 100 }}">
                 <div class="card h-100 border-0 product-card position-relative bg-white shadow-sm" style="border-radius: 16px;">
                     <div class="p-2 bg-white" style="border-radius: 16px 16px 0 0;">
@@ -793,7 +834,7 @@
         </div>
         
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
-            @forelse($latestArticles ?? [] as $article)
+            @forelse($latestArticles as $article)
             <div class="col" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
                 <div class="card product-card h-100 border-0 shadow-sm">
                     <div class="product-img-wrap bg-light d-flex align-items-center justify-content-center gallery-img-mobile" style="height: 150px;">
@@ -832,7 +873,7 @@
         </div>
         
         <div class="row g-3">
-            @forelse($galleries ?? [] as $index => $gallery)
+            @forelse($galleries as $index => $gallery)
                 <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="{{ ($loop->iteration % 4) * 100 }}">
                     <div class="card h-100 border-0 shadow-sm gallery-card-hover bg-white" style="border-radius: 12px; cursor: pointer; transition: all 0.3s ease; border: 1px solid #f1f5f9 !important;" data-bs-toggle="modal" data-bs-target="#homeGalleryModal{{ $gallery->id }}">
                         <div class="position-relative overflow-hidden" style="height: 180px; border-radius: 12px 12px 0 0;">
